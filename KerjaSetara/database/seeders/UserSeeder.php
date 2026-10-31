@@ -19,6 +19,32 @@ class UserSeeder extends Seeder
             'role' => 'admin',
         ]);
 
+        // Candidate Nadia (Active session mockup profile)
+        User::create([
+            'name' => 'Nadia',
+            'full_name' => 'Nadia Saraswati',
+            'headline' => 'UI/UX Designer & Accessibility Advocate',
+            'email' => 'nadia@kerjasetara.id',
+            'password' => Hash::make('password'),
+            'role' => 'kandidat',
+            'accessibility_category' => 'komunikasi',
+            'phone' => '+62 812 3456 7890',
+            'city' => 'Jakarta, Indonesia',
+            'bio' => 'UI/UX Designer yang berfokus pada desain inklusif dan aksesibilitas digital untuk semua kalangan talenta.',
+            'accessibility_preferences' => [
+                'kursi_roda',
+                'toilet_disabilitas',
+                'bisindo',
+                'screen_reader',
+                'quiet_room',
+                'jam_fleksibel',
+            ],
+            'accessibility_notes' => 'Membutuhkan pencahayaan sedang dan software pembaca layar aktif.',
+            'portfolio_url' => 'https://behance.net/nadiasaras',
+            'linkedin_url' => 'https://linkedin.com/in/nadiasaraswati',
+            'resume_file' => 'CV_Nadia_Saraswati_Inklusif_2026.pdf',
+        ]);
+
         // Existing legacy accounts (preserved)
         User::create([
             'name' => 'Ujang HRD',

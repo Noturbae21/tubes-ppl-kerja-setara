@@ -22,8 +22,8 @@
 
                 <div class="flex flex-wrap gap-3">
                     @if($user->role === 'kandidat')
-                        <a href="{{ route('home') }}#lowongan" class="bg-white text-blue-900 font-bold px-5 py-2.5 rounded-xl hover:bg-blue-50 text-sm shadow transition-all">
-                            Jelajahi Lowongan Kerja
+                        <a href="{{ route('kandidat.home') }}" class="bg-white text-blue-900 font-bold px-5 py-2.5 rounded-xl hover:bg-blue-50 text-sm shadow transition-all">
+                            Jelajahi Lowongan Kerja Inklusif
                         </a>
                     @else
                         <a href="#" class="bg-white text-blue-900 font-bold px-5 py-2.5 rounded-xl hover:bg-blue-50 text-sm shadow transition-all">

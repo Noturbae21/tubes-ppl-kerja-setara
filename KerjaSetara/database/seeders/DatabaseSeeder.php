@@ -12,6 +12,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,           // Users first (no dependencies)
             CompanyProfileSeeder::class, // Creates HRD users + company profiles
             JobVacancySeeder::class,     // Needs company_profiles
+            JobApplicationSeeder::class, // Seeds sample applications (Nadia & candidates)
             TestimonialSeeder::class,    // Independent
         ]);
     }

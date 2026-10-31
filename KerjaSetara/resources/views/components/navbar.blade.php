@@ -24,7 +24,7 @@
                 <a href="#tentang" class="navbar-link" role="menuitem">Tentang Kami</a>
                 <a href="#aksesibilitas" class="navbar-link" role="menuitem">Fitur Aksesibilitas</a>
                 <a href="#perusahaan" class="navbar-link" role="menuitem">Untuk Perusahaan</a>
-                <a href="#lowongan" class="navbar-link" role="menuitem">Cari Kerja</a>
+                <a href="{{ route('kandidat.home') }}" class="navbar-link" role="menuitem">Cari Kerja</a>
             </div>
 
             <!-- Desktop Auth Buttons -->
@@ -98,7 +98,7 @@
             <a href="#tentang" class="block px-3 py-2.5 text-sm font-medium text-slate-700 hover:text-blue-900 hover:bg-blue-50 rounded-lg transition-colors" role="menuitem" @click="mobileOpen = false">Tentang Kami</a>
             <a href="#aksesibilitas" class="block px-3 py-2.5 text-sm font-medium text-slate-700 hover:text-blue-900 hover:bg-blue-50 rounded-lg transition-colors" role="menuitem" @click="mobileOpen = false">Fitur Aksesibilitas</a>
             <a href="#perusahaan" class="block px-3 py-2.5 text-sm font-medium text-slate-700 hover:text-blue-900 hover:bg-blue-50 rounded-lg transition-colors" role="menuitem" @click="mobileOpen = false">Untuk Perusahaan</a>
-            <a href="#lowongan" class="block px-3 py-2.5 text-sm font-medium text-slate-700 hover:text-blue-900 hover:bg-blue-50 rounded-lg transition-colors" role="menuitem" @click="mobileOpen = false">Cari Kerja</a>
+            <a href="{{ route('kandidat.home') }}" class="block px-3 py-2.5 text-sm font-medium text-slate-700 hover:text-blue-900 hover:bg-blue-50 rounded-lg transition-colors" role="menuitem" @click="mobileOpen = false">Cari Kerja</a>
             <div class="pt-3 mt-3 border-t border-slate-100 flex flex-col gap-2">
                 @auth
                     <a href="{{ route('dashboard') }}" class="block text-center btn-outline text-sm py-2.5">Dashboard</a>

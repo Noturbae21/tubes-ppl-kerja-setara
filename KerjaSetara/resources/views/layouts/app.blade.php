@@ -16,11 +16,35 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
+    <style>
+        [x-cloak] { display: none !important; }
+    </style>
+
     <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
-    <!-- Vite Assets -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <!-- Tailwind CSS (CDN fallback to prevent blank/unstyled white screen) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#193a7c',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Vite Assets (Safe Check) -->
+    @php
+        $manifestExists = file_exists(public_path('build/manifest.json')) || file_exists(public_path('build/.vite/manifest.json'));
+        $hotExists = file_exists(public_path('hot'));
+    @endphp
+    @if($hotExists || $manifestExists)
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @endif
 
     @stack('head')
 </head>
@@ -64,7 +88,9 @@
     @endif
 
     <!-- Navbar -->
-    @include('components.navbar')
+    @section('navbar')
+        @include('components.navbar')
+    @show
 
     <!-- Main Content -->
     <main id="main-content">

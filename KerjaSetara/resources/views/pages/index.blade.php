@@ -35,7 +35,7 @@
 
                 <!-- CTA Buttons -->
                 <div class="flex flex-col sm:flex-row gap-3 mb-8">
-                    <a href="{{ route('register') }}" class="btn-primary" aria-label="Temukan lowongan kerja inklusif">
+                    <a href="{{ route('kandidat.home') }}" class="btn-primary" aria-label="Temukan lowongan kerja inklusif">
                         Temukan Lowongan
                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
@@ -327,7 +327,11 @@
                         <div class="bg-white rounded-xl p-5 border border-slate-200 card-hover">
                             <div class="flex items-start justify-between mb-3">
                                 <div class="flex-1">
-                                    <h3 class="font-semibold text-slate-900 text-sm leading-tight">{{ $vacancy->title }}</h3>
+                                    <h3 class="font-semibold text-slate-900 text-sm leading-tight hover:text-blue-900">
+                                        <a href="{{ route('kandidat.lowongan.show', $vacancy->id) }}">
+                                            {{ $vacancy->title }}
+                                        </a>
+                                    </h3>
                                     <p class="text-xs text-slate-500 mt-1">{{ $vacancy->company->company_name ?? 'Perusahaan' }}</p>
                                 </div>
                                 @if($vacancy->company->is_inclusive_certified)
@@ -339,10 +343,15 @@
                                 {{ $vacancy->location }}
                                 <span class="badge-pill bg-blue-50 text-blue-700 py-0.5">{{ ucfirst(str_replace('-', ' ', $vacancy->job_type)) }}</span>
                             </div>
-                            <div class="flex flex-wrap gap-1">
-                                @foreach(array_slice($vacancy->accessibility_tags ?? [], 0, 3) as $tag)
-                                    <span class="badge-pill bg-slate-100 text-slate-600 text-xs py-0.5">{{ str_replace('_', ' ', $tag) }}</span>
-                                @endforeach
+                            <div class="flex items-center justify-between pt-2 border-t border-slate-100">
+                                <div class="flex flex-wrap gap-1">
+                                    @foreach(array_slice($vacancy->accessibility_tags ?? [], 0, 2) as $tag)
+                                        <span class="badge-pill bg-slate-100 text-slate-600 text-xs py-0.5">{{ str_replace('_', ' ', $tag) }}</span>
+                                    @endforeach
+                                </div>
+                                <a href="{{ route('kandidat.lowongan.show', $vacancy->id) }}" class="text-xs font-bold text-blue-900 hover:text-blue-700">
+                                    Detail →
+                                </a>
                             </div>
                         </div>
                     @endforeach
