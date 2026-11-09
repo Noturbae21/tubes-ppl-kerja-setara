@@ -93,6 +93,7 @@ class JobApplicationSeeder extends Seeder
                 'salary_min' => 9000000,
                 'salary_max' => 16000000,
                 'desc' => 'Merancang pengalaman digital inklusif yang ramah screen reader dan assistive touch.',
+                'tags' => ['ramp', 'lift', 'ramped_access', 'sign_language', 'bisindo', 'jam_fleksibel', 'toilet_khusus'],
             ],
             'Frontend Developer' => [
                 'company' => 'Nusa Digital',
@@ -102,6 +103,7 @@ class JobApplicationSeeder extends Seeder
                 'salary_min' => 8500000,
                 'salary_max' => 15000000,
                 'desc' => 'Mengembangkan antarmuka web modern dengan standar aksesibilitas WCAG 2.1 Level AA.',
+                'tags' => ['ramp', 'lift', 'screen_reader', 'keyboard_navigation', 'wfh_fleksibel'],
             ],
             'Customer Support' => [
                 'company' => 'PT Solusi Bersama',
@@ -111,6 +113,7 @@ class JobApplicationSeeder extends Seeder
                 'salary_min' => 5500000,
                 'salary_max' => 8000000,
                 'desc' => 'Melayani komunikasi pelanggan dengan dukungan komunikasi teks dan bahasa isyarat.',
+                'tags' => ['ramp', 'lift', 'toilet_khusus', 'sign_language', 'komunikasi_teks'],
             ],
             'Data Analyst' => [
                 'company' => 'Arunika Finance',
@@ -120,6 +123,7 @@ class JobApplicationSeeder extends Seeder
                 'salary_min' => 8000000,
                 'salary_max' => 14000000,
                 'desc' => 'Mengolah metrik keuangan inklusif dan memvisualisasikan insight bisnis strategis.',
+                'tags' => ['screen_reader', 'keyboard_navigation', 'ruang_tenang', 'wfh_fleksibel'],
             ],
         ];
 
@@ -136,7 +140,7 @@ class JobApplicationSeeder extends Seeder
                     'location' => $v['location'],
                     'job_type' => $v['type'],
                     'category' => $v['category'],
-                    'accessibility_tags' => ['screen_reader', 'keyboard_navigation'],
+                    'accessibility_tags' => $v['tags'] ?? ['screen_reader', 'keyboard_navigation'],
                     'salary_min' => $v['salary_min'],
                     'salary_max' => $v['salary_max'],
                     'is_active' => true,
@@ -230,4 +234,3 @@ class JobApplicationSeeder extends Seeder
         }
     }
 }
-

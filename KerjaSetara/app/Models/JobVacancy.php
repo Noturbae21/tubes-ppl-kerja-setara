@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\MatchingService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -356,118 +357,14 @@ class JobVacancy extends Model
      */
     public function calculateMatching(?User $user = null, ?string $categoryOverride = null): array
     {
-        $candidateCategory = $categoryOverride ?: ($user?->accessibility_category ?: 'fisik');
-        $jobTags = $this->accessibility_tags ?: [];
-        $allFacilities = self::availableFacilities();
+        return app(MatchingService::class)->calculateMatchPercentage($user, $this, $categoryOverride);
+    }
 
-        // Facilities expected for candidate category
-        $categoryExpectations = [
-            'fisik' => [
-                'primary' => ['ramp', 'lift', 'toilet_khusus', 'parkir_disabilitas'],
-                'secondary' => ['jalur_pemandu', 'wfh_fleksibel'],
-                'label' => 'Disabilitas Fisik & Pengguna Kursi Roda',
-            ],
-            'komunikasi' => [
-                'primary' => ['sign_language', 'wfh_fleksibel'],
-                'secondary' => ['braille', 'toilet_khusus'],
-                'label' => 'Disabilitas Sensorik (Tunarungu & Wicara)',
-            ],
-            'digital' => [
-                'primary' => ['screen_reader', 'keyboard_navigation', 'high_contrast'],
-                'secondary' => ['voice_command', 'wfh_fleksibel'],
-                'label' => 'Disabilitas Penglihatan & Akses Digital',
-            ],
-            'neurodiverse' => [
-                'primary' => ['ruang_tenang', 'manajemen_beban_adaptif', 'wfh_fleksibel'],
-                'secondary' => ['keyboard_navigation'],
-                'label' => 'Kondisi Neurodiverse & Sensori',
-            ],
-        ];
-
-        $expectation = $categoryExpectations[$candidateCategory] ?? $categoryExpectations['fisik'];
-        $primaryNeeds = $expectation['primary'];
-        $secondaryNeeds = $expectation['secondary'];
-
-        $matchedPrimary = [];
-        $unmatchedPrimary = [];
-        $matchedSecondary = [];
-        $extraFacilities = [];
-
-        foreach ($primaryNeeds as $need) {
-            if (in_array($need, $jobTags)) {
-                $matchedPrimary[] = $allFacilities[$need] ?? ['label' => $need];
-            } else {
-                $unmatchedPrimary[] = $allFacilities[$need] ?? ['label' => $need];
-            }
-        }
-
-        foreach ($secondaryNeeds as $need) {
-            if (in_array($need, $jobTags)) {
-                $matchedSecondary[] = $allFacilities[$need] ?? ['label' => $need];
-            }
-        }
-
-        foreach ($jobTags as $tag) {
-            if (! in_array($tag, $primaryNeeds) && ! in_array($tag, $secondaryNeeds)) {
-                if (isset($allFacilities[$tag])) {
-                    $extraFacilities[] = $allFacilities[$tag];
-                }
-            }
-        }
-
-        // Percentage calculation
-        $totalPrimary = count($primaryNeeds);
-        $countMatchedPrimary = count($matchedPrimary);
-        $countMatchedSecondary = count($matchedSecondary);
-
-        if ($this->category === $candidateCategory) {
-            $baseScore = 80;
-            $bonus = ($totalPrimary > 0 ? ($countMatchedPrimary / $totalPrimary) * 15 : 10) + ($countMatchedSecondary * 2);
-            $percentage = (int) min(98, max(75, round($baseScore + $bonus)));
-        } else {
-            // Check if tags overlap anyway (e.g. tech remote jobs having digital tags)
-            if ($totalPrimary > 0 && $countMatchedPrimary > 0) {
-                $percentage = (int) min(95, max(65, round(65 + ($countMatchedPrimary / $totalPrimary) * 25 + ($countMatchedSecondary * 3))));
-            } else {
-                $percentage = in_array('wfh_fleksibel', $jobTags) || $this->job_type === 'remote' ? 78 : 65;
-            }
-        }
-
-        // Category direct match boost
-        if ($countMatchedPrimary === $totalPrimary && $totalPrimary > 0) {
-            $percentage = max(95, $percentage);
-        }
-
-        // Status & Color
-        if ($percentage >= 90) {
-            $badge = 'Sangat Cocok';
-            $badgeColor = 'text-emerald-700 bg-emerald-50 border-emerald-200';
-            $ringColor = '#10B981'; // emerald-500
-            $summaryText = 'Fasilitas di lowongan ini memenuhi seluruh standar kebutuhan aksesibilitas utama Anda.';
-        } elseif ($percentage >= 75) {
-            $badge = 'Cocok';
-            $badgeColor = 'text-blue-700 bg-blue-50 border-blue-200';
-            $ringColor = '#2563EB'; // blue-600
-            $summaryText = 'Sebagian besar fasilitas ramah inklusi yang Anda perlukan telah disediakan oleh perusahaan ini.';
-        } else {
-            $badge = 'Cukup Cocok';
-            $badgeColor = 'text-amber-700 bg-amber-50 border-amber-200';
-            $ringColor = '#F59E0B'; // amber-500
-            $summaryText = 'Perusahaan menyediakan fasilitas kerja dasar, akomodasi khusus dapat diajukan saat proses wawancara.';
-        }
-
-        return [
-            'percentage' => $percentage,
-            'badge' => $badge,
-            'badge_color' => $badgeColor,
-            'ring_color' => $ringColor,
-            'candidate_category' => $candidateCategory,
-            'category_title' => $expectation['label'],
-            'matched_primary' => $matchedPrimary,
-            'unmatched_primary' => $unmatchedPrimary,
-            'matched_secondary' => $matchedSecondary,
-            'extra_facilities' => $extraFacilities,
-            'summary_text' => $summaryText,
-        ];
+    /**
+     * Get the match percentage integer (e.g. 95) for the given user.
+     */
+    public function calculateMatchPercentage(?User $user = null): int
+    {
+        return $this->calculateMatching($user)['percentage'];
     }
 }

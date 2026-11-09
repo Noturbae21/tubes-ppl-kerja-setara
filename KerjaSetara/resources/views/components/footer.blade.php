@@ -68,8 +68,8 @@
                     <li><a href="#" class="footer-link hover:text-white">Syarat & Ketentuan</a></li>
                     <li><a href="#" class="footer-link hover:text-white">Kebijakan Privasi</a></li>
                     <li><a href="#" class="footer-link hover:text-white text-blue-400">Pemrosesan Aksesibilitas</a></li>
-                    <li><a href="#" class="footer-link hover:text-white">Pusat Trust</a></li>
-                    <li><a href="#" class="footer-link hover:text-white">Laporkan Konten</a></li>
+                    <li><a href="{{ route('hrd.login') }}" class="footer-link hover:text-white">Portal Perusahaan (HRD)</a></li>
+                    <li><a href="{{ route('admin.login') }}" class="footer-link hover:text-white">Portal Administrator</a></li>
                 </ul>
             </div>
         </div>

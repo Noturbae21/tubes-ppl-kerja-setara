@@ -274,20 +274,20 @@
                         <!-- Top Header & Calibrated Category -->
                         <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
                             <div class="flex items-center gap-2">
-                                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                                <h2 id="matching-heading" class="text-sm font-extrabold uppercase tracking-wider text-slate-700">
-                                    Matching Engine
+                                <h2 id="matching-heading" class="text-sm font-bold text-slate-800">
+                                    Kecocokan Aksesibilitas Anda
                                 </h2>
+                                <span class="text-slate-400 text-xs cursor-help" title="Dihitung oleh MatchingEngine berdasarkan preferensi aksesibilitas profil Anda dan fasilitas terdaftar lowongan ini">ⓘ</span>
                             </div>
-                            <span class="text-[11px] font-bold text-blue-800 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200">
-                                Sistem Cerdas
+                            <span class="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                                MatchingEngine
                             </span>
                         </div>
 
-                        <!-- Candidate Profile Calibrator -->
-                        <div class="mb-5 bg-slate-50 p-3 rounded-2xl border border-slate-200">
-                            <label for="cat-selector" class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1">
-                                Dikalibrasi Berdasarkan Profil:
+                        <!-- Candidate Profile Calibrator Dropdown -->
+                        <div class="mb-4 bg-slate-50 p-2.5 rounded-2xl border border-slate-200">
+                            <label for="cat-selector" class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-1">
+                                Profil Kalibrasi Kebutuhan:
                             </label>
                             <form action="{{ route('kandidat.lowongan.show', $vacancy->id) }}" method="GET" id="cat-form">
                                 <select name="cat"
@@ -311,16 +311,20 @@
                         </div>
 
                         <!-- Circular Percentage Indicator (Gauge Donut) -->
-                        <div class="text-center py-4 flex flex-col items-center">
+                        <div class="text-center py-2 flex flex-col items-center">
                             @php
-                                $pct = $matching['percentage'];
-                                $radius = 54;
+                                $pct = $matchPercentage ?? ($matching['percentage'] ?? 85);
+                                $breakdownList = $breakdown ?? ($matching['breakdown'] ?? []);
+                                $statusText = $matchStatus ?? ($matching['badge'] ?? 'Cocok');
+                                $statusColor = $badgeColor ?? ($matching['badge_color'] ?? 'text-emerald-700 bg-emerald-50 border-emerald-200');
+                                $donutRingColor = $ringColor ?? ($matching['ring_color'] ?? '#10B981');
+                                $radius = 50;
                                 $circumference = 2 * pi() * $radius;
                                 $dashOffset = $circumference - ($pct / 100) * $circumference;
                             @endphp
 
-                            <div class="relative w-36 h-36 flex items-center justify-center mb-3">
-                                <svg class="w-36 h-36 transform -rotate-90" viewBox="0 0 120 120">
+                            <div class="relative w-32 h-32 flex items-center justify-center mb-2">
+                                <svg class="w-32 h-32 transform -rotate-90" viewBox="0 0 120 120">
                                     <!-- Background Track -->
                                     <circle cx="60" cy="60" r="{{ $radius }}"
                                             stroke="#E2E8F0"
@@ -328,7 +332,7 @@
                                             fill="transparent" />
                                     <!-- Animated Progress Ring -->
                                     <circle cx="60" cy="60" r="{{ $radius }}"
-                                            stroke="{{ $matching['ring_color'] }}"
+                                            stroke="{{ $donutRingColor }}"
                                             stroke-width="10"
                                             stroke-dasharray="{{ $circumference }}"
                                             stroke-dashoffset="{{ $dashOffset }}"
@@ -337,68 +341,54 @@
                                             class="transition-all duration-1000 ease-out" />
                                 </svg>
                                 
-                                <!-- Center Text -->
+                                <!-- Center Text (Dynamic Matching Percentage) -->
                                 <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
                                     <span class="text-3xl font-black text-slate-900 leading-none">
-                                        {{ $pct }}%
-                                    </span>
-                                    <span class="text-[10px] uppercase font-bold text-slate-400 tracking-wider mt-1">
-                                        Kecocokan
+                                        {{ $matchPercentage }}%
                                     </span>
                                 </div>
                             </div>
 
                             <!-- Match Status Badge -->
-                            <div class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-extrabold border {{ $matching['badge_color'] }} mb-2">
-                                <span>★</span>
-                                <span>{{ $matching['badge'] }}</span>
+                            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold border {{ $statusColor }} mb-2">
+                                <span>{{ $statusText }}</span>
                             </div>
-
-                            <p class="text-xs text-slate-600 leading-relaxed max-w-xs font-normal">
-                                {{ $matching['summary_text'] }}
-                            </p>
                         </div>
 
-                        <!-- Breakdown Rincian Fasilitas -->
-                        <div class="mt-4 pt-4 border-t border-slate-100 space-y-4">
-                            
-                            <!-- Matched Primary Facilities -->
-                            <div>
-                                <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-800 flex items-center gap-1.5 mb-2">
-                                    <svg class="w-4 h-4 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                                    </svg>
-                                    Fasilitas Utama Cocok Sempurna ({{ count($matching['matched_primary']) }}):
-                                </span>
-                                <ul class="space-y-1.5">
-                                    @foreach($matching['matched_primary'] as $mp)
-                                        <li class="flex items-center gap-2 text-xs font-semibold text-slate-700 bg-emerald-50/70 px-2.5 py-1.5 rounded-xl border border-emerald-150">
-                                            <span class="text-emerald-700 font-bold">✓</span>
-                                            <span>{{ $mp['label'] }}</span>
-                                        </li>
-                                    @endforeach
-                                </ul>
-                            </div>
+                        <!-- Rincian Pencocokan System (Figma Style) -->
+                        <div class="mt-3 pt-3 border-t border-slate-100 space-y-2">
+                            <span class="text-[11px] font-bold text-slate-700 block">
+                                Rincian Pencocokan System:
+                            </span>
+                            <ul class="space-y-1.5">
+                                @foreach($breakdownList as $item)
+                                    <li class="flex items-center justify-between text-xs py-1 px-2.5 rounded-xl {{ $item['is_available'] ? 'bg-emerald-50/60 text-slate-800' : 'bg-amber-50/60 text-slate-700' }}">
+                                        <div class="flex items-center gap-2">
+                                            @if($item['is_available'])
+                                                <svg class="w-4 h-4 text-emerald-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                                </svg>
+                                            @else
+                                                <svg class="w-4 h-4 text-amber-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                                                </svg>
+                                            @endif
+                                            <span class="font-medium text-xs">{{ $item['feature'] }}</span>
+                                        </div>
+                                        <span class="text-[11px] font-semibold {{ $item['is_available'] ? 'text-emerald-700' : 'text-amber-700' }}">
+                                            ({{ $item['status'] }})
+                                        </span>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
 
-                            <!-- Additional Facilities -->
-                            @if(count($matching['extra_facilities']) > 0)
-                                <div>
-                                    <span class="text-[11px] font-bold uppercase tracking-wider text-blue-800 flex items-center gap-1.5 mb-2">
-                                        <svg class="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd" />
-                                        </svg>
-                                        Fasilitas Ekstra Perusahaan:
-                                    </span>
-                                    <div class="flex flex-wrap gap-1.5">
-                                        @foreach(array_slice($matching['extra_facilities'], 0, 4) as $extra)
-                                            <span class="text-[11px] font-medium text-slate-700 bg-slate-100 px-2 py-1 rounded-lg">
-                                                + {{ $extra['label'] }}
-                                            </span>
-                                        @endforeach
-                                    </div>
-                                </div>
-                            @endif
-
+                        <!-- Calibration Footer Note -->
+                        <div class="mt-4 p-3 bg-blue-50/60 rounded-2xl border border-blue-100/80 text-[11px] text-blue-900 leading-relaxed flex items-start gap-2">
+                            <svg class="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span>Dikalibrasi berdasarkan Preferensi Aksesibilitas di Profil Anda.</span>
                         </div>
 
                         <!-- CTA button inside Matching Card -->

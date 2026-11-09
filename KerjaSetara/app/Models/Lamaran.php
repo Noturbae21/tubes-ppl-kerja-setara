@@ -10,4 +10,3 @@ class Lamaran extends JobApplication
 {
     protected $table = 'job_applications';
 }
-

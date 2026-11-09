@@ -12,28 +12,28 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            if (!Schema::hasColumn('users', 'headline')) {
+            if (! Schema::hasColumn('users', 'headline')) {
                 $table->string('headline')->nullable()->after('full_name');
             }
-            if (!Schema::hasColumn('users', 'city')) {
+            if (! Schema::hasColumn('users', 'city')) {
                 $table->string('city')->nullable()->after('phone');
             }
-            if (!Schema::hasColumn('users', 'bio')) {
+            if (! Schema::hasColumn('users', 'bio')) {
                 $table->text('bio')->nullable()->after('city');
             }
-            if (!Schema::hasColumn('users', 'accessibility_preferences')) {
+            if (! Schema::hasColumn('users', 'accessibility_preferences')) {
                 $table->json('accessibility_preferences')->nullable()->after('accessibility_category');
             }
-            if (!Schema::hasColumn('users', 'accessibility_notes')) {
+            if (! Schema::hasColumn('users', 'accessibility_notes')) {
                 $table->text('accessibility_notes')->nullable()->after('accessibility_preferences');
             }
-            if (!Schema::hasColumn('users', 'resume_file')) {
+            if (! Schema::hasColumn('users', 'resume_file')) {
                 $table->string('resume_file')->nullable()->after('bio');
             }
-            if (!Schema::hasColumn('users', 'portfolio_url')) {
+            if (! Schema::hasColumn('users', 'portfolio_url')) {
                 $table->string('portfolio_url')->nullable()->after('resume_file');
             }
-            if (!Schema::hasColumn('users', 'linkedin_url')) {
+            if (! Schema::hasColumn('users', 'linkedin_url')) {
                 $table->string('linkedin_url')->nullable()->after('portfolio_url');
             }
         });
@@ -58,4 +58,3 @@ return new class extends Migration
         });
     }
 };
-

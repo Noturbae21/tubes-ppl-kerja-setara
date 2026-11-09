@@ -7,6 +7,8 @@ use App\Models\JobApplication;
 use App\Models\JobVacancy;
 use App\Models\SavedJob;
 use App\Models\User;
+use App\Models\UserAccessibilityPreference;
+use Database\Seeders\JobApplicationSeeder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -146,47 +148,7 @@ class KandidatController extends Controller
      */
     public function show($id, Request $request)
     {
-        $vacancy = JobVacancy::with('company')->findOrFail($id);
-
-        $currentUser = Auth::user();
-        $selectedCategory = $request->query('cat', $currentUser?->accessibility_category ?? 'fisik');
-
-        // Calibrate matching engine
-        $matching = $vacancy->calculateMatching($currentUser, $selectedCategory);
-
-        // Check bookmark & application status
-        $hasApplied = $currentUser ? $currentUser->hasAppliedTo($vacancy->id) : false;
-        $isSaved = $currentUser ? $currentUser->hasSaved($vacancy->id) : false;
-
-        $existingApplication = $hasApplied
-            ? $currentUser->applications()->where('job_vacancy_id', $vacancy->id)->first()
-            : null;
-
-        // Similar vacancies in same category
-        $relatedVacancies = JobVacancy::with('company')
-            ->active()
-            ->where('id', '!=', $vacancy->id)
-            ->where('category', $vacancy->category)
-            ->take(3)
-            ->get();
-
-        // Stored sample CVs for the candidate dropdown
-        $candidateResumes = [
-            'CV Utama - '.($currentUser?->name ?? 'Talenta Inklusif').' (Terbaru 2026).pdf',
-            'Portofolio Teknis & Riwayat Proyek - '.($currentUser?->name ?? 'Kandidat').'.pdf',
-            'Ringkasan Profil Akomodasi Aksesibilitas.pdf',
-        ];
-
-        return view('kandidat.show', compact(
-            'vacancy',
-            'matching',
-            'hasApplied',
-            'isSaved',
-            'existingApplication',
-            'relatedVacancies',
-            'selectedCategory',
-            'candidateResumes'
-        ));
+        return app(JobController::class)->show($id, $request);
     }
 
     /**
@@ -462,15 +424,26 @@ class KandidatController extends Controller
         // TAB 2: PREFERENSI AKSESIBILITAS
         if ($section === 'preferensi' || $section === 'accessibility') {
             $validated = $request->validate([
-                'accessibility_preferences'   => 'nullable|array',
+                'accessibility_preferences' => 'nullable|array',
                 'accessibility_preferences.*' => 'string',
-                'accessibility_notes'         => 'nullable|string|max:1000',
+                'accessibility_notes' => 'nullable|string|max:1000',
             ]);
 
-            $user->update([
-                'accessibility_preferences' => $request->input('accessibility_preferences', []),
-                'accessibility_notes'       => $request->input('accessibility_notes'),
-            ]);
+            $prefs = $request->input('accessibility_preferences', []);
+            $prefModel = $user->accessibilityPreference ?? new UserAccessibilityPreference(['user_id' => $user->id]);
+
+            // Map standard keys to boolean flags
+            $prefModel->wheelchair_access = in_array('kursi_roda', $prefs) || in_array('wheelchair_access', $prefs) || in_array('ramp', $prefs);
+            $prefModel->sign_language = in_array('bisindo', $prefs) || in_array('sign_language', $prefs);
+            $prefModel->screen_reader = in_array('screen_reader', $prefs);
+            $prefModel->quiet_room = in_array('quiet_room', $prefs) || in_array('ruang_tenang', $prefs);
+            $prefModel->accessible_restroom = in_array('toilet_disabilitas', $prefs) || in_array('accessible_restroom', $prefs);
+            $prefModel->flexible_hours = in_array('jam_fleksibel', $prefs) || in_array('flexible_hours', $prefs);
+            $prefModel->adjustable_desk = in_array('meja_adjustable', $prefs) || in_array('adjustable_desk', $prefs);
+            $prefModel->accessible_parking = in_array('parkir_disabilitas', $prefs) || in_array('accessible_parking', $prefs);
+            $prefModel->additional_preferences = $prefs;
+            $prefModel->notes = $request->input('accessibility_notes');
+            $prefModel->save();
 
             return redirect()->route('kandidat.profil', ['tab' => 'accessibility'])
                 ->with('success', 'Preferensi aksesibilitas berhasil diperbarui!');
@@ -480,8 +453,8 @@ class KandidatController extends Controller
         if ($section === 'cv') {
             $validated = $request->validate([
                 'portfolio_url' => 'nullable|string|max:255',
-                'linkedin_url'  => 'nullable|string|max:255',
-                'resume_file'   => 'nullable|string|max:255',
+                'linkedin_url' => 'nullable|string|max:255',
+                'resume_file' => 'nullable|string|max:255',
             ]);
 
             $user->update($validated);
@@ -495,8 +468,8 @@ class KandidatController extends Controller
             $request->validate([
                 'new_password' => 'required|string|min:8|confirmed',
             ], [
-                'new_password.required'  => 'Kata sandi baru wajib diisi.',
-                'new_password.min'       => 'Kata sandi baru minimal 8 karakter.',
+                'new_password.required' => 'Kata sandi baru wajib diisi.',
+                'new_password.min' => 'Kata sandi baru minimal 8 karakter.',
                 'new_password.confirmed' => 'Konfirmasi kata sandi baru tidak cocok.',
             ]);
 
@@ -510,24 +483,24 @@ class KandidatController extends Controller
 
         // TAB 1: INFORMASI PRIBADI (DEFAULT)
         $validated = $request->validate([
-            'name'      => 'required|string|max:100',
+            'name' => 'required|string|max:100',
             'full_name' => 'nullable|string|max:150',
-            'headline'  => 'nullable|string|max:150',
-            'phone'     => 'nullable|string|max:30',
-            'city'      => 'nullable|string|max:100',
-            'location'  => 'nullable|string|max:100',
-            'bio'       => 'nullable|string|max:1000',
+            'headline' => 'nullable|string|max:150',
+            'phone' => 'nullable|string|max:30',
+            'city' => 'nullable|string|max:100',
+            'location' => 'nullable|string|max:100',
+            'bio' => 'nullable|string|max:1000',
         ], [
             'name.required' => 'Nama tampilan wajib diisi.',
-            'name.max'      => 'Nama tampilan maksimal 100 karakter.',
+            'name.max' => 'Nama tampilan maksimal 100 karakter.',
         ]);
 
-        if (!empty($validated['location']) && empty($validated['city'])) {
+        if (! empty($validated['location']) && empty($validated['city'])) {
             $validated['city'] = $validated['location'];
         }
         unset($validated['location']);
 
-        if (empty($validated['full_name']) && !empty($validated['name'])) {
+        if (empty($validated['full_name']) && ! empty($validated['name'])) {
             $validated['full_name'] = $validated['name'];
         }
 
@@ -544,7 +517,7 @@ class KandidatController extends Controller
     {
         if ($user->applications()->count() === 0) {
             try {
-                (new \Database\Seeders\JobApplicationSeeder())->run();
+                (new JobApplicationSeeder)->run();
             } catch (\Throwable $e) {
                 // Ignore jika database koneksi atau seeder sudah jalan
             }

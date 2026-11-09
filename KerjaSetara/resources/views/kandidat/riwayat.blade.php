@@ -424,7 +424,7 @@
     </div>
 
 
-    <!-- 2. MODAL DETAIL TAWARAN KERJA DITERIMA -->
+    <!-- 2. MODAL DETAIL TAWARAN KERJA DITERIMA (Sesuai Desain Figma) -->
     <div x-show="activeModal === 'offer'"
          x-cloak
          class="fixed inset-0 z-50 overflow-y-auto"
@@ -442,7 +442,7 @@
              @click="closeModal()"></div>
 
         <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
-            <div class="relative transform overflow-hidden rounded-2xl bg-white p-6 sm:p-7 text-left shadow-2xl transition-all sm:my-8 w-full max-w-lg border border-slate-100"
+            <div class="relative transform overflow-hidden rounded-3xl bg-white p-6 sm:p-8 text-left shadow-2xl transition-all sm:my-8 w-full max-w-xl border border-slate-100"
                  x-show="activeModal === 'offer'"
                  x-transition:enter="ease-out duration-200"
                  x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
@@ -453,7 +453,7 @@
                 <!-- Close Button (X) -->
                 <button type="button"
                         @click="closeModal()"
-                        class="absolute top-5 right-5 p-1 rounded-lg border border-slate-200 text-slate-400 hover:text-slate-600 hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:outline-none transition-colors"
+                        class="absolute top-6 right-6 p-1.5 rounded-xl border border-slate-200 text-slate-400 hover:text-slate-600 hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:outline-none transition-colors"
                         aria-label="Tutup jendela penawaran kerja">
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -462,86 +462,91 @@
 
                 <!-- Header -->
                 <div class="pr-8">
-                    <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 mb-2">
-                        <span>Penawaran Resmi KerjaSetara</span>
-                        <span aria-hidden="true">🎉</span>
-                    </div>
-                    <h3 id="modal-offer-title" class="text-xl font-extrabold text-slate-900 tracking-tight">
-                        Tawaran Kerja Diterima
+                    <h3 id="modal-offer-title" class="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
+                        <span>🎉</span>
+                        <span>Tawaran Kerja Diterima - <span x-text="selectedApp?.company"></span></span>
                     </h3>
-                    <p class="text-sm font-semibold text-slate-800 mt-1">
-                        <span x-text="selectedApp?.title"></span> di <span x-text="selectedApp?.company"></span>
-                    </p>
+                    <div class="mt-4">
+                        <h4 class="text-base font-bold text-slate-900" x-text="(selectedApp?.title || 'Customer Support') + ' (Full-Time)'"></h4>
+                        <p class="text-xs text-slate-500 mt-0.5">
+                            <span x-text="selectedApp?.company"></span> · Jakarta
+                        </p>
+                    </div>
                 </div>
 
-                <!-- Offering Details -->
-                <div class="mt-5 space-y-4">
-                    <!-- Gaji & Kompensasi -->
+                <!-- Offering Details Card Box -->
+                <div class="mt-4 rounded-2xl border border-slate-200/90 p-4 sm:p-5 space-y-4 bg-white">
+                    <!-- Gaji & Tunjangan -->
                     <div class="flex items-start gap-3.5">
-                        <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0 mt-0.5" aria-hidden="true">
+                        <div class="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0 mt-0.5" aria-hidden="true">
                             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                             </svg>
                         </div>
                         <div>
-                            <span class="text-xs text-slate-500 font-medium block">Gaji Pokok & Tunjangan</span>
-                            <span class="text-sm font-bold text-slate-900" x-text="selectedApp?.salary"></span>
-                            <span class="text-xs text-slate-500 block mt-0.5" x-text="selectedApp?.benefits"></span>
+                            <span class="text-xs text-slate-500 font-medium block">Gaji & tunjangan</span>
+                            <span class="text-xs sm:text-sm font-semibold text-slate-900 leading-relaxed block mt-0.5">
+                                Rp6.500.000 bruto / bulan, BPJS Kesehatan dan Ketenagakerjaan, serta tunjangan internet Rp250.000 / bulan.
+                            </span>
                         </div>
                     </div>
 
                     <!-- Tanggal Mulai Bekerja -->
-                    <div class="flex items-start gap-3.5">
-                        <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0 mt-0.5" aria-hidden="true">
+                    <div class="flex items-start gap-3.5 pt-2 border-t border-slate-100">
+                        <div class="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0 mt-0.5" aria-hidden="true">
                             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                             </svg>
                         </div>
                         <div>
-                            <span class="text-xs text-slate-500 font-medium block">Tanggal Mulai Bekerja</span>
-                            <span class="text-sm font-bold text-slate-900" x-text="selectedApp?.start_date"></span>
-                        </div>
-                    </div>
-
-                    <!-- Fasilitas Ramah Disabilitas Terkonfirmasi -->
-                    <div class="bg-emerald-50/80 rounded-xl p-3.5 border border-emerald-200/70 flex items-start gap-3">
-                        <div class="text-emerald-700 flex-shrink-0 mt-0.5" aria-hidden="true">
-                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                            </svg>
-                        </div>
-                        <div>
-                            <span class="text-xs font-bold text-emerald-900 block">Fasilitas Ramah Disabilitas Terkonfirmasi:</span>
-                            <p class="text-xs sm:text-sm text-emerald-900 mt-0.5 leading-relaxed" x-text="selectedApp?.facilities"></p>
+                            <span class="text-xs text-slate-500 font-medium block">Tanggal mulai bekerja</span>
+                            <span class="text-xs sm:text-sm font-semibold text-slate-900 block mt-0.5">
+                                Senin, 2 November 2026
+                            </span>
                         </div>
                     </div>
                 </div>
 
+                <!-- Fasilitas Ramah Disabilitas Terkonfirmasi Box (Hijau) -->
+                <div class="bg-emerald-50/80 rounded-2xl p-4 border border-emerald-200/80 flex items-start gap-3 mt-4">
+                    <div class="text-emerald-700 flex-shrink-0 mt-0.5" aria-hidden="true">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <span class="text-xs font-bold text-emerald-950 block">Fasilitas ramah disabilitas terkonfirmasi</span>
+                        <p class="text-xs text-emerald-900 mt-1 leading-relaxed">
+                            Akses kursi roda, lift dan toilet aksesibel; auto-caption pada rapat daring, komunikasi kerja berbasis teks, serta pendamping onboarding sesuai kebutuhan.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Disclaimer Info -->
+                <p class="text-[11px] text-slate-400 mt-4 leading-relaxed">
+                    Contoh penawaran untuk konsep desain. Gaji, fasilitas, dan tanggal mulai bersifat ilustratif, bukan informasi perusahaan yang terverifikasi.
+                </p>
+
                 <!-- Footer: Tolak & Terima Penawaran -->
-                <div class="mt-6 pt-5 border-t border-slate-100 flex flex-col-reverse sm:flex-row items-center justify-end gap-3">
-                    
+                <div class="mt-6 pt-5 border-t border-slate-100 flex items-center justify-end gap-3">
                     <!-- Form Tolak Tawaran -->
-                    <form method="POST" :action="'/kandidat/lamaran/' + selectedApp?.id + '/tolak-tawaran'" class="w-full sm:w-auto">
+                    <form method="POST" :action="'/kandidat/lamaran/' + selectedApp?.id + '/tolak-tawaran'">
                         @csrf
                         <button type="submit"
                                 onclick="return confirm('Apakah Anda yakin ingin menolak penawaran kerja ini?')"
-                                class="w-full sm:w-auto px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-700 hover:text-rose-700 hover:bg-rose-50 text-sm font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-rose-400 focus-visible:outline-none">
+                                class="px-5 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 text-sm font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:outline-none cursor-pointer">
                             Tolak Tawaran
                         </button>
                     </form>
 
                     <!-- Form Terima Tawaran -->
-                    <form method="POST" :action="'/kandidat/lamaran/' + selectedApp?.id + '/terima-tawaran'" class="w-full sm:w-auto">
+                    <form method="POST" :action="'/kandidat/lamaran/' + selectedApp?.id + '/terima-tawaran'">
                         @csrf
                         <button type="submit"
-                                class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-[#059669] hover:bg-emerald-700 text-white text-sm font-semibold shadow-xs flex items-center justify-center gap-2 focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none transition-colors">
-                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                            </svg>
+                                class="px-6 py-2.5 rounded-xl bg-[#059669] hover:bg-emerald-700 text-white text-sm font-semibold shadow-xs flex items-center justify-center gap-2 focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none transition-colors cursor-pointer">
                             <span>Terima Penawaran Kerja</span>
                         </button>
                     </form>
-
                 </div>
 
             </div>
@@ -549,7 +554,7 @@
     </div>
 
 
-    <!-- 3. MODAL KONFIRMASI BATALKAN LAMARAN -->
+    <!-- 3. MODAL KONFIRMASI BATALKAN LAMARAN (Sesuai Desain Figma) -->
     <div x-show="activeModal === 'cancel'"
          x-cloak
          class="fixed inset-0 z-50 overflow-y-auto"
@@ -567,7 +572,7 @@
              @click="closeModal()"></div>
 
         <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
-            <div class="relative transform overflow-hidden rounded-2xl bg-white p-6 sm:p-7 text-left shadow-2xl transition-all sm:my-8 w-full max-w-md border border-slate-100"
+            <div class="relative transform overflow-hidden rounded-3xl bg-white p-6 sm:p-8 text-left shadow-2xl transition-all sm:my-8 w-full max-w-md border border-slate-100"
                  x-show="activeModal === 'cancel'"
                  x-transition:enter="ease-out duration-200"
                  x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
@@ -578,44 +583,41 @@
                 <!-- Close Button (X) -->
                 <button type="button"
                         @click="closeModal()"
-                        class="absolute top-5 right-5 p-1 rounded-lg border border-slate-200 text-slate-400 hover:text-slate-600 hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-rose-600 focus-visible:outline-none transition-colors"
+                        class="absolute top-6 right-6 p-1.5 rounded-xl border border-slate-200 text-slate-400 hover:text-slate-600 hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-rose-600 focus-visible:outline-none transition-colors"
                         aria-label="Tutup jendela batalkan lamaran">
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </button>
 
-                <!-- Icon Peringatan -->
-                <div class="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center mb-4" aria-hidden="true">
+                <!-- Header -->
+                <h3 id="modal-cancel-title" class="text-xl font-bold text-slate-900 tracking-tight">
+                    Batalkan Lamaran Ini?
+                </h3>
+
+                <!-- Icon Peringatan (Orange soft circle) -->
+                <div class="my-5 w-12 h-12 rounded-2xl bg-amber-50 border border-amber-200 text-amber-600 flex items-center justify-center" aria-hidden="true">
                     <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                     </svg>
                 </div>
 
-                <!-- Header -->
-                <h3 id="modal-cancel-title" class="text-lg font-bold text-slate-900 tracking-tight">
-                    Batalkan Lamaran Pekerjaan?
-                </h3>
-                <p class="text-sm font-semibold text-slate-800 mt-1">
-                    <span x-text="selectedApp?.title"></span> di <span x-text="selectedApp?.company"></span>
-                </p>
-
-                <!-- Deskripsi Peringatan -->
-                <p class="text-xs sm:text-sm text-slate-600 mt-3 leading-relaxed">
-                    Apakah Anda yakin ingin membatalkan lamaran pekerjaan ini? Tindakan ini akan menarik seluruh berkas yang Anda kirimkan dari proses seleksi tim HRD. Tindakan ini tidak dapat dibatalkan.
+                <!-- Deskripsi Peringatan sesuai Figma -->
+                <p class="text-sm text-slate-600 leading-relaxed">
+                    Apakah Anda yakin ingin membatalkan lamaran untuk posisi '<span class="font-semibold text-slate-900" x-text="selectedApp?.title || 'Frontend Developer'"></span>' di <span class="font-semibold text-slate-900" x-text="selectedApp?.company || 'Nusa Digital'"></span>? Tindakan ini tidak dapat dibatalkan.
                 </p>
 
                 <!-- Form Action Submit -->
-                <form method="POST" :action="'/kandidat/lamaran/' + selectedApp?.id + '/batal'" class="mt-6">
+                <form method="POST" :action="'/kandidat/lamaran/' + selectedApp?.id + '/batal'" class="mt-8">
                     @csrf
                     <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
                         <button type="button"
                                 @click="closeModal()"
-                                class="px-5 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-700 text-sm font-semibold hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-slate-300 focus-visible:outline-none transition-colors">
+                                class="px-5 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-700 text-sm font-semibold hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-slate-300 focus-visible:outline-none transition-colors cursor-pointer">
                             Batal
                         </button>
                         <button type="submit"
-                                class="px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-sm font-semibold shadow-xs flex items-center gap-2 focus-visible:ring-2 focus-visible:ring-rose-500 focus-visible:outline-none transition-colors">
+                                class="px-5 py-2.5 rounded-xl bg-[#EF4444] hover:bg-red-600 text-white text-sm font-semibold shadow-xs flex items-center gap-2 focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:outline-none transition-colors cursor-pointer">
                             <span>Ya, Batalkan Lamaran</span>
                         </button>
                     </div>
@@ -626,7 +628,7 @@
     </div>
 
 
-    <!-- 4. MODAL CATATAN EVALUASI REKRUTMEN (FEEDBACK HRD) -->
+    <!-- 4. MODAL CATATAN EVALUASI REKRUTMEN (Sesuai Desain Figma) -->
     <div x-show="activeModal === 'feedback'"
          x-cloak
          class="fixed inset-0 z-50 overflow-y-auto"
@@ -644,7 +646,7 @@
              @click="closeModal()"></div>
 
         <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
-            <div class="relative transform overflow-hidden rounded-2xl bg-white p-6 sm:p-7 text-left shadow-2xl transition-all sm:my-8 w-full max-w-lg border border-slate-100"
+            <div class="relative transform overflow-hidden rounded-3xl bg-white p-6 sm:p-8 text-left shadow-2xl transition-all sm:my-8 w-full max-w-lg border border-slate-100"
                  x-show="activeModal === 'feedback'"
                  x-transition:enter="ease-out duration-200"
                  x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
@@ -655,7 +657,7 @@
                 <!-- Close Button (X) -->
                 <button type="button"
                         @click="closeModal()"
-                        class="absolute top-5 right-5 p-1 rounded-lg border border-slate-200 text-slate-400 hover:text-slate-600 hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:outline-none transition-colors"
+                        class="absolute top-6 right-6 p-1.5 rounded-xl border border-slate-200 text-slate-400 hover:text-slate-600 hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:outline-none transition-colors"
                         aria-label="Tutup jendela catatan evaluasi">
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -664,63 +666,35 @@
 
                 <!-- Header -->
                 <div class="pr-8">
-                    <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-700 mb-2">
-                        <span>Evaluasi Rekrutmen Inklusif</span>
-                    </div>
-                    <h3 id="modal-feedback-title" class="text-lg font-bold text-slate-900 tracking-tight">
+                    <h3 id="modal-feedback-title" class="text-xl font-bold text-slate-900 tracking-tight">
                         Catatan Evaluasi Rekrutmen
                     </h3>
-                    <p class="text-sm font-semibold text-slate-800 mt-1">
-                        <span x-text="selectedApp?.title"></span> di <span x-text="selectedApp?.company"></span>
+                    <p class="text-sm font-semibold text-slate-800 mt-2">
+                        <span x-text="selectedApp?.title || 'Data Analyst'"></span> di <span x-text="selectedApp?.company || 'Arunika Finance'"></span>
                     </p>
-                    <span class="text-xs text-slate-400 block mt-0.5">
-                        Ditinjau oleh Tim HRD pada <span x-text="selectedApp?.date"></span>
-                    </span>
                 </div>
 
-                <!-- Feedback Content -->
-                <div class="mt-5 space-y-3.5">
-                    
-                    <!-- Umpan Balik Utama HRD -->
-                    <div class="bg-slate-50 rounded-xl p-4 border border-slate-200/90 text-xs sm:text-sm text-slate-700 leading-relaxed space-y-2.5">
-                        <div class="flex items-center gap-2 text-slate-900 font-bold text-xs uppercase tracking-wider">
-                            <svg class="w-4 h-4 text-blue-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
-                            </svg>
-                            <span>Umpan Balik Tim Rekruter</span>
-                        </div>
-                        <p x-text="selectedApp?.feedback"></p>
+                <!-- Feedback Content Box -->
+                <div class="mt-4 rounded-2xl border border-slate-200/90 p-4 sm:p-5 bg-white">
+                    <div class="flex items-center gap-2 text-blue-900 font-bold text-xs">
+                        <svg class="w-4 h-4 text-blue-900" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                        </svg>
+                        <span>Umpan balik rekrutmen</span>
                     </div>
-
-                    <!-- Rekomendasi Peningkatan Skill Inklusif -->
-                    <div class="bg-blue-50/70 rounded-xl p-3.5 border border-blue-100 flex items-start gap-3">
-                        <div class="text-blue-700 flex-shrink-0 mt-0.5" aria-hidden="true">
-                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                            </svg>
-                        </div>
-                        <div class="text-xs sm:text-sm text-blue-900 leading-relaxed">
-                            <span class="font-bold block">Rekomendasi Pengembangan:</span>
-                            <span x-text="selectedApp?.recommendation"></span>
-                        </div>
-                    </div>
-
+                    <p class="text-xs sm:text-sm text-slate-700 leading-relaxed mt-2.5"
+                       x-text="selectedApp?.feedback || 'Terima kasih atas antusiasme Anda. Saat ini kami telah memilih kandidat lain yang pengalamannya lebih spesifik dengan kebutuhan data warehouse kami. Tetap semangat!'">
+                        Terima kasih atas antusiasme Anda. Saat ini kami telah memilih kandidat lain yang pengalamannya lebih spesifik dengan kebutuhan data warehouse kami. Tetap semangat!
+                    </p>
                 </div>
 
                 <!-- Footer Actions -->
-                <div class="mt-6 pt-5 border-t border-slate-100 flex items-center justify-end gap-3">
+                <div class="mt-6 pt-5 border-t border-slate-100 flex items-center justify-end">
                     <button type="button"
                             @click="closeModal()"
-                            class="px-5 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-700 text-sm font-semibold hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-slate-300 focus-visible:outline-none transition-colors">
-                        Tutup
+                            class="px-6 py-2.5 rounded-xl bg-[#193a7c] hover:bg-blue-900 text-white text-sm font-semibold shadow-xs focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:outline-none transition-colors cursor-pointer">
+                        Tutup Catatan
                     </button>
-                    <a href="{{ route('kandidat.home') }}"
-                       class="px-5 py-2.5 rounded-xl bg-[#193a7c] text-white text-sm font-semibold hover:bg-blue-800 shadow-xs focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:outline-none transition-colors inline-flex items-center gap-2">
-                        <span>Jelajahi Lowongan Serupa</span>
-                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                        </svg>
-                    </a>
                 </div>
 
             </div>

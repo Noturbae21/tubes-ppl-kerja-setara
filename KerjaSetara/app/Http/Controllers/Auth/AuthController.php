@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\UserAccessibilityPreference;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
@@ -38,8 +38,14 @@ class AuthController extends Controller
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
             'role' => $validated['role'],
-            'accessibility_category' => $validated['accessibility_category'] ?? null,
         ]);
+
+        if (! empty($validated['accessibility_category'])) {
+            UserAccessibilityPreference::create([
+                'user_id' => $user->id,
+                'category' => $validated['accessibility_category'],
+            ]);
+        }
 
         Auth::login($user);
 
@@ -49,44 +55,20 @@ class AuthController extends Controller
 
     // ─── Login ────────────────────────────────────────────────────────────────
 
-    public function showLogin()
+    public function showLogin(Request $request)
     {
-        if (Auth::check()) {
-            return redirect()->route('dashboard');
-        }
-
-        return view('auth.login');
+        return app(LoginController::class)->showLoginForm($request);
     }
 
     public function login(Request $request)
     {
-        $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required', 'string'],
-        ]);
-
-        $remember = $request->boolean('remember');
-
-        if (Auth::attempt($credentials, $remember)) {
-            $request->session()->regenerate();
-
-            return redirect()->intended(route('dashboard'))
-                ->with('success', 'Selamat datang kembali, '.Auth::user()->name.'!');
-        }
-
-        throw ValidationException::withMessages([
-            'email' => 'Email atau kata sandi tidak sesuai.',
-        ]);
+        return app(LoginController::class)->login($request);
     }
 
     // ─── Logout ───────────────────────────────────────────────────────────────
 
     public function logout(Request $request)
     {
-        Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        return redirect()->route('home')->with('success', 'Anda telah berhasil keluar.');
+        return app(LoginController::class)->logout($request);
     }
 }

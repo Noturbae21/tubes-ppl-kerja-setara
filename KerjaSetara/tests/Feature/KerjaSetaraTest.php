@@ -82,7 +82,9 @@ class KerjaSetaraTest extends TestCase
         $this->assertDatabaseHas('users', [
             'email' => 'budi.santoso@example.com',
             'role' => 'kandidat',
-            'accessibility_category' => 'fisik',
+        ]);
+        $this->assertDatabaseHas('user_accessibility_preferences', [
+            'category' => 'fisik',
         ]);
     }
 

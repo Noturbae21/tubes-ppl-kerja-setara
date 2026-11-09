@@ -9,11 +9,13 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            UserSeeder::class,           // Users first (no dependencies)
-            CompanyProfileSeeder::class, // Creates HRD users + company profiles
-            JobVacancySeeder::class,     // Needs company_profiles
-            JobApplicationSeeder::class, // Seeds sample applications (Nadia & candidates)
-            TestimonialSeeder::class,    // Independent
+            AdminSeeder::class,           // Dedicated Admin credentials
+            UserSeeder::class,            // Users (Nadia, HRD, candidates)
+            CompanyProfileSeeder::class,  // Creates HRD users + company profiles
+            JobVacancySeeder::class,      // Needs company_profiles
+            JobApplicationSeeder::class,  // Seeds sample applications (Nadia & candidates)
+            AccessibilitySeeder::class,   // Calibrates accessibility preferences & job matching
+            TestimonialSeeder::class,     // Independent
         ]);
     }
 }

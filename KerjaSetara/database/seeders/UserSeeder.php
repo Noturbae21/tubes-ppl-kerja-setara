@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use App\Models\UserAccessibilityPreference;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -10,74 +11,110 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        // Admin account
-        User::create([
-            'name' => 'Admin KerjaSetara',
-            'full_name' => 'Administrator KerjaSetara',
-            'email' => 'admin@kerjasetara.id',
-            'password' => Hash::make('password'),
-            'role' => 'admin',
-        ]);
+        // Admin account (pre-seeded if not already created by AdminSeeder)
+        User::firstOrCreate(
+            ['email' => 'admin@kerjasetara.id'],
+            [
+                'name' => 'Admin KerjaSetara',
+                'full_name' => 'Administrator KerjaSetara',
+                'password' => Hash::make('password'),
+                'role' => 'admin',
+            ]
+        );
 
         // Candidate Nadia (Active session mockup profile)
-        User::create([
-            'name' => 'Nadia',
-            'full_name' => 'Nadia Saraswati',
-            'headline' => 'UI/UX Designer & Accessibility Advocate',
-            'email' => 'nadia@kerjasetara.id',
-            'password' => Hash::make('password'),
-            'role' => 'kandidat',
-            'accessibility_category' => 'komunikasi',
-            'phone' => '+62 812 3456 7890',
-            'city' => 'Jakarta, Indonesia',
-            'bio' => 'UI/UX Designer yang berfokus pada desain inklusif dan aksesibilitas digital untuk semua kalangan talenta.',
-            'accessibility_preferences' => [
-                'kursi_roda',
-                'toilet_disabilitas',
-                'bisindo',
-                'screen_reader',
-                'quiet_room',
-                'jam_fleksibel',
-            ],
-            'accessibility_notes' => 'Membutuhkan pencahayaan sedang dan software pembaca layar aktif.',
-            'portfolio_url' => 'https://behance.net/nadiasaras',
-            'linkedin_url' => 'https://linkedin.com/in/nadiasaraswati',
-            'resume_file' => 'CV_Nadia_Saraswati_Inklusif_2026.pdf',
-        ]);
+        $nadia = User::firstOrCreate(
+            ['email' => 'nadia@kerjasetara.id'],
+            [
+                'name' => 'Nadia',
+                'full_name' => 'Nadia Saraswati',
+                'headline' => 'UI/UX Designer & Accessibility Advocate',
+                'password' => Hash::make('password'),
+                'role' => 'kandidat',
+                'phone' => '+62 812 3456 7890',
+                'city' => 'Jakarta, Indonesia',
+                'bio' => 'UI/UX Designer yang berfokus pada desain inklusif dan aksesibilitas digital untuk semua kalangan talenta.',
+                'portfolio_url' => 'https://behance.net/nadiasaras',
+                'linkedin_url' => 'https://linkedin.com/in/nadiasaraswati',
+                'resume_file' => 'CV_Nadia_Saraswati_Inklusif_2026.pdf',
+            ]
+        );
+
+        UserAccessibilityPreference::updateOrCreate(
+            ['user_id' => $nadia->id],
+            [
+                'category' => 'komunikasi',
+                'wheelchair_access' => true,
+                'sign_language' => true,
+                'screen_reader' => false,
+                'quiet_room' => false,
+                'accessible_restroom' => false,
+                'flexible_hours' => false,
+                'notes' => 'Membutuhkan akses kursi roda dan fasilitas penerjemah bahasa isyarat.',
+                'additional_preferences' => ['kursi_roda', 'bisindo'],
+            ]
+        );
 
         // Existing legacy accounts (preserved)
-        User::create([
-            'name' => 'Ujang HRD',
-            'full_name' => 'Ujang HRD',
-            'email' => 'hrd@example.com',
-            'password' => bcrypt('password'),
-            'role' => 'hrd',
-        ]);
+        User::firstOrCreate(
+            ['email' => 'hrd@example.com'],
+            [
+                'name' => 'Ujang HRD',
+                'full_name' => 'Ujang HRD',
+                'password' => Hash::make('password'),
+                'role' => 'hrd',
+            ]
+        );
 
-        User::create([
-            'name' => 'Thomas Kandidat',
-            'full_name' => 'Thomas Kandidat',
-            'email' => 'kandidat@example.com',
-            'password' => bcrypt('password'),
-            'role' => 'kandidat',
-            'accessibility_category' => 'fisik',
-        ]);
+        $thomas = User::firstOrCreate(
+            ['email' => 'kandidat@example.com'],
+            [
+                'name' => 'Thomas Kandidat',
+                'full_name' => 'Thomas Kandidat',
+                'password' => Hash::make('password'),
+                'role' => 'kandidat',
+            ]
+        );
 
-        User::create([
-            'name' => 'Mario Runtuh',
-            'full_name' => 'Mario Runtuh',
-            'email' => 'mario@example.com',
-            'password' => bcrypt('password'),
-            'role' => 'kandidat',
-            'accessibility_category' => 'digital',
-        ]);
+        UserAccessibilityPreference::updateOrCreate(
+            ['user_id' => $thomas->id],
+            [
+                'category' => 'fisik',
+                'wheelchair_access' => true,
+                'accessible_restroom' => true,
+                'adjustable_desk' => true,
+                'accessible_parking' => true,
+            ]
+        );
 
-        User::create([
-            'name' => 'Admin Lama',
-            'full_name' => 'Admin Lama',
-            'email' => 'admin@example.com',
-            'password' => bcrypt('password'),
-            'role' => 'admin',
-        ]);
+        $mario = User::firstOrCreate(
+            ['email' => 'mario@example.com'],
+            [
+                'name' => 'Mario Runtuh',
+                'full_name' => 'Mario Runtuh',
+                'password' => Hash::make('password'),
+                'role' => 'kandidat',
+            ]
+        );
+
+        UserAccessibilityPreference::updateOrCreate(
+            ['user_id' => $mario->id],
+            [
+                'category' => 'digital',
+                'screen_reader' => true,
+                'high_contrast' => true,
+                'flexible_hours' => true,
+            ]
+        );
+
+        User::firstOrCreate(
+            ['email' => 'admin@example.com'],
+            [
+                'name' => 'Admin Lama',
+                'full_name' => 'Admin Lama',
+                'password' => Hash::make('password'),
+                'role' => 'admin',
+            ]
+        );
     }
 }

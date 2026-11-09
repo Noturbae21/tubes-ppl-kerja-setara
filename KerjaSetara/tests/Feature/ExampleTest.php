@@ -10,6 +10,7 @@ class ExampleTest extends TestCase
     use RefreshDatabase;
 
     protected bool $seed = true;
+
     /**
      * A basic test example.
      */

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -19,9 +20,6 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
-        'accessibility_category',
-        'accessibility_preferences',
-        'accessibility_notes',
         'phone',
         'city',
         'bio',
@@ -41,8 +39,36 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'accessibility_preferences' => 'array',
         ];
+    }
+
+    public function accessibilityPreference(): HasOne
+    {
+        return $this->hasOne(UserAccessibilityPreference::class);
+    }
+
+    public function accessibilityPreferences(): HasOne
+    {
+        return $this->hasOne(UserAccessibilityPreference::class);
+    }
+
+    public function getAccessibilityCategoryAttribute(): ?string
+    {
+        return $this->accessibilityPreference?->category;
+    }
+
+    public function getAccessibilityPreferencesAttribute(): array
+    {
+        if ($this->accessibilityPreference && ! empty($this->accessibilityPreference->additional_preferences)) {
+            return $this->accessibilityPreference->additional_preferences;
+        }
+
+        return $this->accessibilityPreference?->getActivePreferences() ?? [];
+    }
+
+    public function getAccessibilityNotesAttribute(): ?string
+    {
+        return $this->accessibilityPreference?->notes;
     }
 
     public function companyProfile()
@@ -82,6 +108,11 @@ class User extends Authenticatable
 
     public function isKandidat(): bool
     {
-        return $this->role === 'kandidat';
+        return in_array($this->role, ['kandidat', 'user']);
+    }
+
+    public function isUser(): bool
+    {
+        return in_array($this->role, ['kandidat', 'user']);
     }
 }

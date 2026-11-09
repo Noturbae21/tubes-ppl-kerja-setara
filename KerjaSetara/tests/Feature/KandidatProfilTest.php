@@ -52,24 +52,24 @@ class KandidatProfilTest extends TestCase
     public function test_kandidat_can_update_personal_information(): void
     {
         $response = $this->actingAs($this->kandidat)->post('/kandidat/profil', [
-            '_section'  => 'personal',
-            'name'      => 'Nadia Updated',
+            '_section' => 'personal',
+            'name' => 'Nadia Updated',
             'full_name' => 'Nadia Saraswati Updated',
-            'headline'  => 'Senior Product Designer',
-            'phone'     => '+62 811 9999 8888',
-            'city'      => 'Bandung, Indonesia',
-            'bio'       => 'Desainer produk fokus inklusif.',
+            'headline' => 'Senior Product Designer',
+            'phone' => '+62 811 9999 8888',
+            'city' => 'Bandung, Indonesia',
+            'bio' => 'Desainer produk fokus inklusif.',
         ]);
 
         $response->assertRedirect('/kandidat/profil?tab=personal');
         $response->assertSessionHas('success', 'Profil berhasil diperbarui!');
 
         $this->assertDatabaseHas('users', [
-            'id'        => $this->kandidat->id,
-            'name'      => 'Nadia Updated',
+            'id' => $this->kandidat->id,
+            'name' => 'Nadia Updated',
             'full_name' => 'Nadia Saraswati Updated',
-            'headline'  => 'Senior Product Designer',
-            'city'      => 'Bandung, Indonesia',
+            'headline' => 'Senior Product Designer',
+            'city' => 'Bandung, Indonesia',
         ]);
     }
 
@@ -78,9 +78,9 @@ class KandidatProfilTest extends TestCase
         $newPreferences = ['kursi_roda', 'bisindo', 'quiet_room'];
 
         $response = $this->actingAs($this->kandidat)->post('/kandidat/profil', [
-            '_section'                  => 'preferensi',
+            '_section' => 'preferensi',
             'accessibility_preferences' => $newPreferences,
-            'accessibility_notes'       => 'Memerlukan ruangan tenang saat jam istirahat.',
+            'accessibility_notes' => 'Memerlukan ruangan tenang saat jam istirahat.',
         ]);
 
         $response->assertRedirect('/kandidat/profil?tab=accessibility');
@@ -94,20 +94,20 @@ class KandidatProfilTest extends TestCase
     public function test_kandidat_can_update_cv_and_portfolio_links(): void
     {
         $response = $this->actingAs($this->kandidat)->post('/kandidat/profil', [
-            '_section'      => 'cv',
+            '_section' => 'cv',
             'portfolio_url' => 'https://dribbble.com/nadiasaras',
-            'linkedin_url'  => 'https://linkedin.com/in/nadiasaras-pro',
-            'resume_file'   => 'CV_Nadia_2026_Updated.pdf',
+            'linkedin_url' => 'https://linkedin.com/in/nadiasaras-pro',
+            'resume_file' => 'CV_Nadia_2026_Updated.pdf',
         ]);
 
         $response->assertRedirect('/kandidat/profil?tab=cv');
         $response->assertSessionHas('success', 'Dokumen CV dan tautan portofolio berhasil disimpan!');
 
         $this->assertDatabaseHas('users', [
-            'id'            => $this->kandidat->id,
+            'id' => $this->kandidat->id,
             'portfolio_url' => 'https://dribbble.com/nadiasaras',
-            'linkedin_url'  => 'https://linkedin.com/in/nadiasaras-pro',
-            'resume_file'   => 'CV_Nadia_2026_Updated.pdf',
+            'linkedin_url' => 'https://linkedin.com/in/nadiasaras-pro',
+            'resume_file' => 'CV_Nadia_2026_Updated.pdf',
         ]);
     }
 }
