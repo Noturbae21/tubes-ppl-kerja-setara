@@ -18,6 +18,9 @@ class CompanyProfile extends Model
         'accessibility_features',
         'logo_path',
         'website',
+        'phone',
+        'nib_file',
+        'npwp_file',
         'is_inclusive_certified',
         'employee_count',
     ];

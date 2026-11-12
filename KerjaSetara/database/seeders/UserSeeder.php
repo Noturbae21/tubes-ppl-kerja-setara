@@ -56,13 +56,50 @@ class UserSeeder extends Seeder
         );
 
         // Existing legacy accounts (preserved)
-        User::firstOrCreate(
+        // Ensure a company profile exists for HRD user
+        $hrdUser = User::where('email', 'hrd@example.com')->first();
+        \App\Models\CompanyProfile::firstOrCreate(
+            ['user_id' => $hrdUser->id],
+            [
+                'company_name' => 'Perusahaan Inklusif',
+                'description' => 'Profil perusahaan contoh untuk HRD.',
+                'industry' => 'Teknologi',
+                'location' => 'Jakarta Selatan',
+                'accessibility_features' => [],
+                'logo_path' => null,
+                'website' => null,
+                'phone' => null,
+                'nib_file' => null,
+                'npwp_file' => null,
+                'is_inclusive_certified' => false,
+                'employee_count' => 0,
+            ]
+        );
+        $hrdUser = User::firstOrCreate(
             ['email' => 'hrd@example.com'],
             [
                 'name' => 'Ujang HRD',
                 'full_name' => 'Ujang HRD',
                 'password' => Hash::make('password'),
                 'role' => 'hrd',
+            ]
+        );
+        // Create a placeholder company profile for the HRD user if it does not exist
+        \App\Models\CompanyProfile::firstOrCreate(
+            ['user_id' => $hrdUser->id],
+            [
+                'company_name' => 'Perusahaan Inklusif',
+                'description' => 'Profil perusahaan contoh untuk HRD.',
+                'industry' => 'Teknologi',
+                'location' => 'Jakarta Selatan',
+                'accessibility_features' => [],
+                'logo_path' => null,
+                'website' => null,
+                'phone' => null,
+                'nib_file' => null,
+                'npwp_file' => null,
+                'is_inclusive_certified' => false,
+                'employee_count' => 0,
             ]
         );
 

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
+use App\Models\CompanyProfile;
 
 class HrdAuthController extends Controller
 {
@@ -46,9 +47,19 @@ class HrdAuthController extends Controller
                 ]);
             }
 
-            $request->session()->regenerate();
+            // Ensure HRD user has a company profile
+            if (! $user->companyProfile) {
+                \App\Models\CompanyProfile::create([
+                    'user_id' => $user->id,
+                    'company_name' => 'Perusahaan Inklusif',
+                    'description' => 'Profil perusahaan contoh untuk HRD.',
+                    'industry' => 'Teknologi',
+                    'location' => 'Jakarta Selatan',
+                    'accessibility_features' => [],
+                ]);
+            }
 
-            return redirect()->intended(route('hrd.dashboard'))
+            return redirect()->route('hrd.dashboard')
                 ->with('success', 'Selamat datang di Portal Perusahaan Inklusif, '.$user->name.'!');
         }
 

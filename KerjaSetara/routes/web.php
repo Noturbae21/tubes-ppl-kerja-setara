@@ -4,7 +4,11 @@ use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\Hrd\HrdApplicantController;
 use App\Http\Controllers\Hrd\HrdAuthController;
+use App\Http\Controllers\Hrd\HrdDashboardController;
+use App\Http\Controllers\Hrd\HrdSettingsController;
+use App\Http\Controllers\Hrd\HrdVacancyController;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\KandidatController;
 use Illuminate\Support\Facades\Route;
@@ -60,6 +64,10 @@ Route::middleware('auth')->group(function () {
             return redirect()->route('admin.dashboard');
         }
 
+        if ($user->isHrd()) {
+            return redirect()->route('hrd.dashboard');
+        }
+
         return view('dashboard', compact('user'));
     })->name('dashboard');
 });
@@ -90,7 +98,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     });
 });
 
-// ─── HRD / COMPANY PORTAL (Placeholder & Structure for Next Phase) ────────────
+// ─── HRD / COMPANY PORTAL ─────────────────────────────────────────────────────
 Route::prefix('hrd')->name('hrd.')->group(function () {
     Route::get('/login', [HrdAuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [HrdAuthController::class, 'login'])->name('login.submit');
@@ -98,10 +106,28 @@ Route::prefix('hrd')->name('hrd.')->group(function () {
 
     Route::middleware(['is_hrd'])->group(function () {
         Route::get('/', fn () => redirect()->route('hrd.dashboard'));
-        Route::get('/dashboard', function () {
-            $user = auth()->user();
+        Route::get('/dashboard', [HrdDashboardController::class, 'index'])->name('dashboard');
+        Route::get('/ringkasan', [HrdDashboardController::class, 'index'])->name('ringkasan');
 
-            return view('hrd.dashboard', compact('user'));
-        })->name('dashboard');
+        // Kelola Lowongan
+        Route::get('/lowongan', [HrdVacancyController::class, 'index'])->name('lowongan.index');
+        Route::get('/lowongan/buat', [HrdVacancyController::class, 'create'])->name('lowongan.create');
+        Route::post('/lowongan', [HrdVacancyController::class, 'store'])->name('lowongan.store');
+        Route::get('/lowongan/{vacancy}/edit', [HrdVacancyController::class, 'edit'])->name('lowongan.edit');
+        Route::put('/lowongan/{vacancy}', [HrdVacancyController::class, 'update'])->name('lowongan.update');
+        Route::post('/lowongan/{vacancy}/toggle-status', [HrdVacancyController::class, 'toggleStatus'])->name('lowongan.toggle-status');
+        Route::delete('/lowongan/{vacancy}', [HrdVacancyController::class, 'destroy'])->name('lowongan.destroy');
+
+        // Kelola Pelamar
+        Route::get('/pelamar', [HrdApplicantController::class, 'index'])->name('pelamar.index');
+        Route::get('/pelamar/{application}', [HrdApplicantController::class, 'show'])->name('pelamar.show');
+        Route::post('/pelamar/{application}/status', [HrdApplicantController::class, 'updateStatus'])->name('pelamar.updateStatus');
+
+        // Pengaturan Perusahaan
+        Route::get('/pengaturan', [HrdSettingsController::class, 'index'])->name('pengaturan.index');
+        Route::post('/pengaturan/profil', [HrdSettingsController::class, 'updateProfile'])->name('pengaturan.updateProfile');
+        Route::post('/pengaturan/fasilitas', [HrdSettingsController::class, 'updateFacilities'])->name('pengaturan.updateFacilities');
+        Route::post('/pengaturan/dokumen', [HrdSettingsController::class, 'updateDocument'])->name('pengaturan.updateDocument');
+        Route::post('/pengaturan/keamanan', [HrdSettingsController::class, 'updatePassword'])->name('pengaturan.updatePassword');
     });
 });
