@@ -16,12 +16,7 @@ class HrdVacancyController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
-        $company = $user->companyProfile;
-
-        if (! $company) {
-            return redirect()->route('hrd.pengaturan.index')
-                ->with('error', 'Profil perusahaan Anda belum lengkap.');
-        }
+        $company = $user->companyProfile ?? $user->getOrCreateCompanyProfile();
 
         $tab = $request->query('tab', 'semua');
         $search = $request->query('search');
@@ -67,7 +62,7 @@ class HrdVacancyController extends Controller
     public function create()
     {
         $user = Auth::user();
-        $company = $user->companyProfile;
+        $company = $user->companyProfile ?? $user->getOrCreateCompanyProfile();
 
         return view('hrd.vacancies.create', compact('company'));
     }
@@ -78,7 +73,7 @@ class HrdVacancyController extends Controller
     public function store(Request $request)
     {
         $user = Auth::user();
-        $company = $user->companyProfile;
+        $company = $user->companyProfile ?? $user->getOrCreateCompanyProfile();
 
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:255'],

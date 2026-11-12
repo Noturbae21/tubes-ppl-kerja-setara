@@ -28,7 +28,7 @@ class AuthController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'unique:users,email'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'role' => ['required', 'in:kandidat,hrd'],
+            'role' => ['required', 'in:kandidat,user,hrd,company'],
             'accessibility_category' => ['nullable', 'string', 'in:fisik,komunikasi,digital,neurodiverse'],
         ]);
 
@@ -48,6 +48,13 @@ class AuthController extends Controller
         }
 
         Auth::login($user);
+
+        if ($user->isHrd()) {
+            $user->getOrCreateCompanyProfile();
+
+            return redirect()->route('hrd.dashboard')
+                ->with('success', 'Akun perusahaan berhasil dibuat! Selamat datang di Portal HRD KerjaSetara, '.$user->name.'.');
+        }
 
         return redirect()->route('dashboard')
             ->with('success', 'Akun berhasil dibuat! Selamat datang di KerjaSetara, '.$user->name.'.');

@@ -17,12 +17,7 @@ class HrdDashboardController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
-        $company = $user->companyProfile;
-
-        if (! $company) {
-            return redirect()->route('hrd.pengaturan.index')
-                ->with('error', 'Profil perusahaan Anda belum lengkap. Silakan isi informasi profil.');
-        }
+        $company = $user->companyProfile ?? $user->getOrCreateCompanyProfile();
 
         // 1. Metric: Lowongan Aktif
         $activeVacanciesQuery = JobVacancy::where('company_id', $company->id)->where('is_active', true);

@@ -131,3 +131,13 @@ Route::prefix('hrd')->name('hrd.')->group(function () {
         Route::post('/pengaturan/keamanan', [HrdSettingsController::class, 'updatePassword'])->name('pengaturan.updatePassword');
     });
 });
+
+// ─── ALIAS PERUSAHAAN -> HRD (Mencegah Error 404 Pada Rute Perusahaan) ────────
+Route::prefix('perusahaan')->name('perusahaan.')->group(function () {
+    Route::get('/', fn () => redirect()->route('hrd.dashboard'));
+    Route::get('/dashboard', fn () => redirect()->route('hrd.dashboard'))->name('dashboard');
+    Route::get('/login', fn () => redirect()->route('hrd.login'))->name('login');
+    Route::get('/lowongan', fn () => redirect()->route('hrd.lowongan.index'))->name('lowongan');
+    Route::get('/pelamar', fn () => redirect()->route('hrd.pelamar.index'))->name('pelamar');
+    Route::get('/pengaturan', fn () => redirect()->route('hrd.pengaturan.index'))->name('pengaturan');
+});

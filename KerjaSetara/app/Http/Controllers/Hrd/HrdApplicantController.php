@@ -18,12 +18,7 @@ class HrdApplicantController extends Controller
     public function index(Request $request, MatchingService $matchingService)
     {
         $user = Auth::user();
-        $company = $user->companyProfile;
-
-        if (! $company) {
-            return redirect()->route('hrd.pengaturan.index')
-                ->with('error', 'Profil perusahaan Anda belum lengkap.');
-        }
+        $company = $user->companyProfile ?? $user->getOrCreateCompanyProfile();
 
         $vacancies = JobVacancy::where('company_id', $company->id)->get();
 

@@ -103,7 +103,28 @@ class User extends Authenticatable
 
     public function isHrd(): bool
     {
-        return $this->role === 'hrd';
+        return in_array($this->role, ['hrd', 'company']);
+    }
+
+    public function isCompany(): bool
+    {
+        return in_array($this->role, ['hrd', 'company']);
+    }
+
+    public function getOrCreateCompanyProfile(): CompanyProfile
+    {
+        return $this->companyProfile ?? CompanyProfile::firstOrCreate(
+            ['user_id' => $this->id],
+            [
+                'company_name' => $this->name ? (str_starts_with($this->name, 'PT ') ? $this->name : 'PT ' . $this->name) : 'PT Solusi Inklusif Indonesia',
+                'industry' => 'Teknologi Informasi & Konsultan',
+                'location' => $this->city ?? 'Jakarta Selatan',
+                'description' => 'Profil perusahaan inklusif untuk rekrutmen talenta disabilitas.',
+                'accessibility_features' => ['ramp', 'toilet_khusus', 'screen_reader'],
+                'employee_count' => 50,
+                'is_inclusive_certified' => true,
+            ]
+        );
     }
 
     public function isKandidat(): bool

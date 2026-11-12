@@ -21,7 +21,7 @@
                      this.email = 'nadia@kerjasetara.id';
                      this.password = 'password';
                  } else if (role === 'hrd') {
-                     this.email = 'hrd@example.com';
+                     this.email = 'hrd@kerjasetara.id';
                      this.password = 'password';
                  } else if (role === 'admin') {
                      this.email = 'admin@kerjasetara.id';
@@ -319,7 +319,7 @@
                                     @click="fillDemo('hrd')"
                                     class="p-2 rounded-xl border border-slate-200 bg-white hover:bg-emerald-50 text-left transition-colors cursor-pointer group">
                                 <span class="block text-[10px] font-bold text-emerald-800 uppercase">HRD</span>
-                                <span class="block text-[11px] text-slate-600 truncate font-mono">hrd@example.com</span>
+                                <span class="block text-[11px] text-slate-600 truncate font-mono">hrd@kerjasetara.id <span class="text-[9px] text-slate-400 font-normal">(hrd@example.com)</span></span>
                             </button>
                             <button type="button"
                                     @click="fillDemo('admin')"

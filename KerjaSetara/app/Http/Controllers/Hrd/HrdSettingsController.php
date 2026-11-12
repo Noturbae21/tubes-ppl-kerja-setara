@@ -16,11 +16,7 @@ class HrdSettingsController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
-        $company = $user->companyProfile;
-
-        if (! $company) {
-            abort(404, 'Data profil perusahaan belum tersedia.');
-        }
+        $company = $user->companyProfile ?? $user->getOrCreateCompanyProfile();
 
         $activeTab = $request->query('tab', 'profil');
 
@@ -56,7 +52,7 @@ class HrdSettingsController extends Controller
     public function updateProfile(Request $request)
     {
         $user = Auth::user();
-        $company = $user->companyProfile;
+        $company = $user->companyProfile ?? $user->getOrCreateCompanyProfile();
 
         $validated = $request->validate([
             'company_name' => ['required', 'string', 'max:255'],
@@ -82,7 +78,7 @@ class HrdSettingsController extends Controller
     public function updateFacilities(Request $request)
     {
         $user = Auth::user();
-        $company = $user->companyProfile;
+        $company = $user->companyProfile ?? $user->getOrCreateCompanyProfile();
 
         $validated = $request->validate([
             'facilities' => ['nullable', 'array'],
@@ -103,7 +99,7 @@ class HrdSettingsController extends Controller
     public function updateDocument(Request $request)
     {
         $user = Auth::user();
-        $company = $user->companyProfile;
+        $company = $user->companyProfile ?? $user->getOrCreateCompanyProfile();
 
         $request->validate([
             'document_type' => ['required', 'string', 'in:nib,npwp'],

@@ -36,7 +36,7 @@ class LoginController extends Controller
         $credentials = $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required', 'string'],
-            'role' => ['nullable', 'string', 'in:user,kandidat,hrd,admin'],
+            'role' => ['nullable', 'string', 'in:user,kandidat,hrd,company,admin'],
         ]);
 
         $remember = $request->boolean('remember');
@@ -53,7 +53,7 @@ class LoginController extends Controller
 
         // Validate role alignment if role was explicitly selected in the UI
         if ($requestedRole) {
-            $normalizedRole = $requestedRole === 'kandidat' ? 'user' : $requestedRole;
+            $normalizedRole = $requestedRole === 'kandidat' ? 'user' : ($requestedRole === 'company' ? 'hrd' : $requestedRole);
 
             if ($normalizedRole === 'admin' && ! $user->isAdmin()) {
                 Auth::logout();
@@ -112,6 +112,8 @@ class LoginController extends Controller
         }
 
         if ($user->isHrd()) {
+            $user->getOrCreateCompanyProfile();
+
             return redirect()->intended(route('hrd.dashboard'))
                 ->with('success', 'Selamat datang di Portal Perusahaan / HRD, '.$user->name.'.');
         }

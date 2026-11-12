@@ -55,51 +55,101 @@ class UserSeeder extends Seeder
             ]
         );
 
-        // Existing legacy accounts (preserved)
-        // Ensure a company profile exists for HRD user
-        $hrdUser = User::where('email', 'hrd@example.com')->first();
-        \App\Models\CompanyProfile::firstOrCreate(
-            ['user_id' => $hrdUser->id],
+        // Demo HRD account (hrd@kerjasetara.id)
+        $hrdKerjaSetara = User::firstOrCreate(
+            ['email' => 'hrd@kerjasetara.id'],
             [
-                'company_name' => 'Perusahaan Inklusif',
-                'description' => 'Profil perusahaan contoh untuk HRD.',
-                'industry' => 'Teknologi',
-                'location' => 'Jakarta Selatan',
-                'accessibility_features' => [],
-                'logo_path' => null,
-                'website' => null,
-                'phone' => null,
-                'nib_file' => null,
-                'npwp_file' => null,
-                'is_inclusive_certified' => false,
-                'employee_count' => 0,
+                'name' => 'Budi HRD',
+                'full_name' => 'Budi Pratama (HRD)',
+                'headline' => 'Lead People & Culture PT Solusi Inklusif Indonesia',
+                'password' => Hash::make('password'),
+                'role' => 'hrd',
+                'phone' => '+62 812 9876 5432',
+                'city' => 'Jakarta Selatan',
             ]
         );
+
+        $companyInklusif = \App\Models\CompanyProfile::firstOrCreate(
+            ['user_id' => $hrdKerjaSetara->id],
+            [
+                'company_name' => 'PT Solusi Inklusif Indonesia',
+                'description' => 'Perusahaan teknologi yang berkomitmen penuh pada kesetaraan kerja dan inklusi disabilitas.',
+                'industry' => 'Teknologi Informasi & Konsultan',
+                'location' => 'Jakarta Selatan',
+                'accessibility_features' => ['ramp', 'toilet_khusus', 'screen_reader'],
+                'logo_path' => null,
+                'website' => 'https://solusi-inklusif.test',
+                'phone' => '+62 21 555 1234',
+                'is_inclusive_certified' => true,
+                'employee_count' => 150,
+            ]
+        );
+
+        \App\Models\JobVacancy::firstOrCreate(
+            [
+                'company_id' => $companyInklusif->id,
+                'title' => 'Digital Accessibility Specialist',
+            ],
+            [
+                'description' => 'Mengevaluasi dan memastikan aplikasi web dan mobile memenuhi standar WCAG 2.1 Level AA.',
+                'location' => 'Jakarta Selatan',
+                'job_type' => 'hybrid',
+                'category' => 'digital',
+                'accessibility_tags' => ['screen_reader', 'keyboard_navigation', 'ruang_tenang'],
+                'salary_min' => 10000000,
+                'salary_max' => 18000000,
+                'is_active' => true,
+                'deadline' => now()->addDays(30),
+            ]
+        );
+
+        \App\Models\JobVacancy::firstOrCreate(
+            [
+                'company_id' => $companyInklusif->id,
+                'title' => 'Frontend Developer (Inclusive Web)',
+            ],
+            [
+                'description' => 'Mengembangkan antarmuka web modern dengan fokus pada aksesibilitas dan performa tinggi.',
+                'location' => 'Jakarta Selatan',
+                'job_type' => 'remote',
+                'category' => 'digital',
+                'accessibility_tags' => ['wfh_fleksibel', 'screen_reader', 'kursi_roda'],
+                'salary_min' => 9000000,
+                'salary_max' => 16000000,
+                'is_active' => true,
+                'deadline' => now()->addDays(45),
+            ]
+        );
+
+        // Existing legacy HRD accounts (preserved)
         $hrdUser = User::firstOrCreate(
             ['email' => 'hrd@example.com'],
             [
                 'name' => 'Ujang HRD',
                 'full_name' => 'Ujang HRD',
+                'headline' => 'Talent Acquisition PT Perusahaan Inklusif',
                 'password' => Hash::make('password'),
                 'role' => 'hrd',
+                'phone' => '+62 813 1234 5678',
+                'city' => 'Jakarta Selatan',
             ]
         );
-        // Create a placeholder company profile for the HRD user if it does not exist
+
         \App\Models\CompanyProfile::firstOrCreate(
             ['user_id' => $hrdUser->id],
             [
-                'company_name' => 'Perusahaan Inklusif',
+                'company_name' => 'PT Perusahaan Inklusif',
                 'description' => 'Profil perusahaan contoh untuk HRD.',
                 'industry' => 'Teknologi',
                 'location' => 'Jakarta Selatan',
-                'accessibility_features' => [],
+                'accessibility_features' => ['ramp', 'toilet_khusus', 'screen_reader'],
                 'logo_path' => null,
-                'website' => null,
-                'phone' => null,
-                'nib_file' => null,
-                'npwp_file' => null,
-                'is_inclusive_certified' => false,
-                'employee_count' => 0,
+                'website' => 'https://perusahaan-inklusif.test',
+                'phone' => '+62 21 555 5678',
+                'nib_file' => 'NIB_Perusahaan_Inklusif.pdf',
+                'npwp_file' => 'NPWP_Perusahaan_Inklusif.pdf',
+                'is_inclusive_certified' => true,
+                'employee_count' => 50,
             ]
         );
 
