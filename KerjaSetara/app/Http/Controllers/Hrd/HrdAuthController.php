@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Hrd;
 
 use App\Http\Controllers\Controller;
+use App\Models\CompanyProfile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
-use App\Models\CompanyProfile;
 
 class HrdAuthController extends Controller
 {
@@ -59,7 +59,7 @@ class HrdAuthController extends Controller
 
             // Ensure HRD user has a company profile
             if (! $user->companyProfile) {
-                \App\Models\CompanyProfile::create([
+                CompanyProfile::create([
                     'user_id' => $user->id,
                     'company_name' => 'Perusahaan Inklusif',
                     'description' => 'Profil perusahaan contoh untuk HRD.',

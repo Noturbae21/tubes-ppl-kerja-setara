@@ -78,4 +78,48 @@ class MatchingEngineTest extends TestCase
         $this->assertGreaterThanOrEqual(0, $score);
         $this->assertLessThanOrEqual(100, $score);
     }
+
+    public function test_job_model_calculates_exact_match_score(): void
+    {
+        $score = $this->uiuxJob->calculateMatchScore($this->nadia);
+
+        $this->assertIsInt($score);
+        $this->assertEquals(100, $score); // Nadia has wheelchair_access & sign_language, UI/UX has both
+    }
+
+    public function test_kandidat_home_displays_match_score_badge_and_sorts_descending(): void
+    {
+        $response = $this->actingAs($this->nadia)->get('/kandidat/home');
+
+        $response->assertStatus(200);
+        $response->assertSee('Peluang yang Sesuai untuk Anda');
+        $response->assertSee('Kecocokan Tertinggi');
+        $response->assertSee('% Cocok');
+
+        // Verify the vacancies passed to view are sorted by match_score descending
+        $vacancies = $response->viewData('vacancies');
+        $this->assertNotEmpty($vacancies);
+
+        $prevScore = 101;
+        foreach ($vacancies as $job) {
+            $this->assertNotNull($job->match_score);
+            $this->assertLessThanOrEqual($prevScore, $job->match_score);
+            $prevScore = $job->match_score;
+        }
+    }
+
+    public function test_kandidat_home_filter_presets_work_with_matching_sort(): void
+    {
+        $response = $this->actingAs($this->nadia)->get('/kandidat/home?category=fisik&tag=ramp');
+
+        $response->assertStatus(200);
+        $vacancies = $response->viewData('vacancies');
+        $this->assertNotEmpty($vacancies);
+
+        $prevScore = 101;
+        foreach ($vacancies as $job) {
+            $this->assertLessThanOrEqual($prevScore, $job->match_score);
+            $prevScore = $job->match_score;
+        }
+    }
 }

@@ -10,6 +10,8 @@ use App\Models\User;
 use App\Models\UserAccessibilityPreference;
 use Database\Seeders\JobApplicationSeeder;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 
 class KandidatController extends Controller
@@ -24,6 +26,7 @@ class KandidatController extends Controller
         $category = $request->query('category');
         $jobType = $request->query('job_type');
         $tag = $request->query('tag');
+        $sort = $request->query('sort', 'match');
 
         $query = JobVacancy::with('company')->active();
 
@@ -52,8 +55,51 @@ class KandidatController extends Controller
             $query->where('job_type', $jobType);
         }
 
-        // Paginate results (9 cards per page for a balanced 3-column grid)
-        $vacancies = $query->latest()->paginate(9)->withQueryString();
+        // Authenticated user or demo candidate for matching
+        $user = Auth::user();
+        if (! $user) {
+            $user = User::where('email', 'nadia@kerjasetara.id')->orWhere('role', 'kandidat')->first();
+        }
+
+        // Retrieve filtered vacancies
+        $allVacancies = $query->get();
+
+        // Calculate exact MatchingEngine score for each vacancy
+        $allVacancies->each(function (JobVacancy $job) use ($user) {
+            $job->match_score = $job->calculateMatchScore($user);
+        });
+
+        // Sort vacancies: default 'match' (highest score first)
+        if ($sort === 'latest' || $sort === 'terbaru') {
+            $sorted = $allVacancies->sortByDesc('created_at')->values();
+        } elseif ($sort === 'salary' || $sort === 'gaji') {
+            $sorted = $allVacancies->sortByDesc('salary_max')->values();
+        } else {
+            // Default: sort by match_score descending, then latest
+            $sorted = $allVacancies->sort(function ($a, $b) {
+                if ($a->match_score === $b->match_score) {
+                    return $b->id <=> $a->id;
+                }
+
+                return $b->match_score <=> $a->match_score;
+            })->values();
+        }
+
+        // Paginate results (9 cards per page for balanced 3-column grid)
+        $perPage = 9;
+        $currentPage = Paginator::resolveCurrentPage() ?: 1;
+        $currentItems = $sorted->slice(($currentPage - 1) * $perPage, $perPage)->values();
+
+        $vacancies = new LengthAwarePaginator(
+            $currentItems,
+            $sorted->count(),
+            $perPage,
+            $currentPage,
+            [
+                'path' => Paginator::resolveCurrentPath(),
+                'query' => $request->query(),
+            ]
+        );
 
         // Verified inclusive partner companies for gallery
         $partnerCompanies = CompanyProfile::where('is_inclusive_certified', true)
@@ -139,7 +185,8 @@ class KandidatController extends Controller
             'jobType',
             'savedJobIds',
             'appliedJobIds',
-            'categoryCounts'
+            'categoryCounts',
+            'sort'
         ));
     }
 

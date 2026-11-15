@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\CompanyProfile;
+use App\Models\JobVacancy;
 use App\Models\User;
 use App\Models\UserAccessibilityPreference;
 use Illuminate\Database\Seeder;
@@ -69,7 +71,7 @@ class UserSeeder extends Seeder
             ]
         );
 
-        $companyInklusif = \App\Models\CompanyProfile::firstOrCreate(
+        $companyInklusif = CompanyProfile::firstOrCreate(
             ['user_id' => $hrdKerjaSetara->id],
             [
                 'company_name' => 'PT Solusi Inklusif Indonesia',
@@ -85,7 +87,7 @@ class UserSeeder extends Seeder
             ]
         );
 
-        \App\Models\JobVacancy::firstOrCreate(
+        JobVacancy::firstOrCreate(
             [
                 'company_id' => $companyInklusif->id,
                 'title' => 'Digital Accessibility Specialist',
@@ -103,7 +105,7 @@ class UserSeeder extends Seeder
             ]
         );
 
-        \App\Models\JobVacancy::firstOrCreate(
+        JobVacancy::firstOrCreate(
             [
                 'company_id' => $companyInklusif->id,
                 'title' => 'Frontend Developer (Inclusive Web)',
@@ -135,7 +137,7 @@ class UserSeeder extends Seeder
             ]
         );
 
-        \App\Models\CompanyProfile::firstOrCreate(
+        CompanyProfile::firstOrCreate(
             ['user_id' => $hrdUser->id],
             [
                 'company_name' => 'PT Perusahaan Inklusif',
@@ -225,7 +227,7 @@ class UserSeeder extends Seeder
                 'status' => 'active',
             ]
         );
-        \App\Models\CompanyProfile::firstOrCreate(
+        CompanyProfile::firstOrCreate(
             ['user_id' => $ptTekno->id],
             [
                 'company_name' => 'PT Teknologi Inovasi',
@@ -238,7 +240,7 @@ class UserSeeder extends Seeder
         );
 
         User::firstOrCreate(
-            ['email' => 'budi.santoso@example.com'],
+            ['email' => 'budi.demo@example.com'],
             [
                 'name' => 'Budi Santoso',
                 'full_name' => 'Budi Santoso',
@@ -258,7 +260,7 @@ class UserSeeder extends Seeder
                 'status' => 'active',
             ]
         );
-        \App\Models\CompanyProfile::firstOrCreate(
+        CompanyProfile::firstOrCreate(
             ['user_id' => $ptNusa->id],
             [
                 'company_name' => 'PT Nusa Digital',

@@ -17,6 +17,7 @@ class HrdPortalTest extends TestCase
     protected bool $seed = true;
 
     protected User $hrdUser;
+
     protected CompanyProfile $company;
 
     protected function setUp(): void

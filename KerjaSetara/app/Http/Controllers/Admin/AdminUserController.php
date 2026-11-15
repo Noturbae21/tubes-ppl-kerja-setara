@@ -17,7 +17,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
-use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class AdminUserController extends Controller
@@ -180,7 +179,7 @@ class AdminUserController extends Controller
             ]
         );
 
-        $tempMsg = $isTempPassword ? " Kata sandi sementara telah dibuat (Wajib diganti saat login pertama)." : "";
+        $tempMsg = $isTempPassword ? ' Kata sandi sementara telah dibuat (Wajib diganti saat login pertama).' : '';
 
         return redirect()->route('admin.users')
             ->with('success', "Akun pengguna {$user->name} berhasil ditambahkan ke sistem.{$tempMsg}");

@@ -77,7 +77,7 @@ class KerjaSetaraTest extends TestCase
             'accessibility_category' => 'fisik',
         ]);
 
-        $response->assertRedirect('/dashboard');
+        $response->assertRedirect(route('kandidat.home'));
         $this->assertAuthenticated();
         $this->assertDatabaseHas('users', [
             'email' => 'budi.santoso@example.com',

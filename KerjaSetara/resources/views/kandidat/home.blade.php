@@ -179,24 +179,49 @@
                 </p>
             </div>
 
-            <!-- Job Type Quick Selector Pills -->
-            <div class="flex items-center gap-1.5 bg-white p-1 rounded-xl border border-slate-200 self-start sm:self-auto shadow-2xs">
-                <a href="{{ route('kandidat.home', array_merge(request()->query(), ['job_type' => null, 'page' => 1])) }}"
-                   class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors {{ empty($jobType) ? 'bg-blue-900 text-white shadow-2xs' : 'text-slate-600 hover:text-slate-900' }}">
-                    Semua Tipe
-                </a>
-                <a href="{{ route('kandidat.home', array_merge(request()->query(), ['job_type' => 'hybrid', 'page' => 1])) }}"
-                   class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors {{ $jobType === 'hybrid' ? 'bg-blue-900 text-white shadow-2xs' : 'text-slate-600 hover:text-slate-900' }}">
-                    Hybrid
-                </a>
-                <a href="{{ route('kandidat.home', array_merge(request()->query(), ['job_type' => 'remote', 'page' => 1])) }}"
-                   class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors {{ $jobType === 'remote' ? 'bg-blue-900 text-white shadow-2xs' : 'text-slate-600 hover:text-slate-900' }}">
-                    Remote / WFH
-                </a>
-                <a href="{{ route('kandidat.home', array_merge(request()->query(), ['job_type' => 'full-time', 'page' => 1])) }}"
-                   class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors {{ $jobType === 'full-time' ? 'bg-blue-900 text-white shadow-2xs' : 'text-slate-600 hover:text-slate-900' }}">
-                    Penuh Waktu
-                </a>
+            <!-- Controls: Sort & Job Type Pills -->
+            <div class="flex flex-wrap items-center gap-3 self-start sm:self-auto">
+                <!-- Sort Dropdown -->
+                <div class="flex items-center gap-1.5 bg-white px-2.5 py-1 rounded-xl border border-slate-200 shadow-2xs">
+                    <span class="text-xs font-semibold text-slate-400">Urutkan:</span>
+                    <form action="{{ route('kandidat.home') }}" method="GET" id="sort-form" class="inline">
+                        @foreach(request()->except('sort', 'page') as $key => $val)
+                            @if(is_array($val))
+                                @foreach($val as $item)
+                                    <input type="hidden" name="{{ $key }}[]" value="{{ $item }}">
+                                @endforeach
+                            @elseif(!empty($val))
+                                <input type="hidden" name="{{ $key }}" value="{{ $val }}">
+                            @endif
+                        @endforeach
+                        <select name="sort" id="sort-selector" onchange="document.getElementById('sort-form').submit()"
+                                class="text-xs font-bold text-blue-900 bg-transparent border-0 focus:ring-0 focus:outline-none cursor-pointer pr-1">
+                            <option value="match" {{ ($sort ?? 'match') === 'match' ? 'selected' : '' }}>🎯 Kecocokan Tertinggi</option>
+                            <option value="latest" {{ ($sort ?? '') === 'latest' ? 'selected' : '' }}>🕒 Terbaru</option>
+                            <option value="salary" {{ ($sort ?? '') === 'salary' ? 'selected' : '' }}>💰 Gaji Tertinggi</option>
+                        </select>
+                    </form>
+                </div>
+
+                <!-- Job Type Quick Selector Pills -->
+                <div class="flex items-center gap-1.5 bg-white p-1 rounded-xl border border-slate-200 shadow-2xs">
+                    <a href="{{ route('kandidat.home', array_merge(request()->query(), ['job_type' => null, 'page' => 1])) }}"
+                       class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors {{ empty($jobType) ? 'bg-blue-900 text-white shadow-2xs' : 'text-slate-600 hover:text-slate-900' }}">
+                        Semua Tipe
+                    </a>
+                    <a href="{{ route('kandidat.home', array_merge(request()->query(), ['job_type' => 'hybrid', 'page' => 1])) }}"
+                       class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors {{ $jobType === 'hybrid' ? 'bg-blue-900 text-white shadow-2xs' : 'text-slate-600 hover:text-slate-900' }}">
+                        Hybrid
+                    </a>
+                    <a href="{{ route('kandidat.home', array_merge(request()->query(), ['job_type' => 'remote', 'page' => 1])) }}"
+                       class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors {{ $jobType === 'remote' ? 'bg-blue-900 text-white shadow-2xs' : 'text-slate-600 hover:text-slate-900' }}">
+                        Remote / WFH
+                    </a>
+                    <a href="{{ route('kandidat.home', array_merge(request()->query(), ['job_type' => 'full-time', 'page' => 1])) }}"
+                       class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors {{ $jobType === 'full-time' ? 'bg-blue-900 text-white shadow-2xs' : 'text-slate-600 hover:text-slate-900' }}">
+                        Penuh Waktu
+                    </a>
+                </div>
             </div>
         </div>
 
@@ -208,6 +233,16 @@
                         $isSaved = in_array($job->id, $savedJobIds);
                         $hasApplied = in_array($job->id, $appliedJobIds);
                         $facilities = $job->facility_details;
+                        $score = $job->match_score ?? $job->calculateMatchScore();
+                        if ($score >= 90) {
+                            $badgeStyle = 'bg-emerald-50 text-emerald-800 border-emerald-200 ring-1 ring-emerald-300/60';
+                        } elseif ($score >= 70) {
+                            $badgeStyle = 'bg-blue-50 text-blue-800 border-blue-200 ring-1 ring-blue-300/60';
+                        } elseif ($score > 0) {
+                            $badgeStyle = 'bg-amber-50 text-amber-800 border-amber-200 ring-1 ring-amber-300/60';
+                        } else {
+                            $badgeStyle = 'bg-slate-50 text-slate-600 border-slate-200';
+                        }
                     @endphp
                     
                     <article class="bg-white rounded-3xl border border-slate-200 shadow-sm hover:shadow-xl hover:border-blue-300 transition-all duration-300 flex flex-col justify-between overflow-hidden group focus-within:ring-2 focus-within:ring-blue-600"
@@ -236,17 +271,28 @@
                                     </div>
                                 </div>
 
-                                <!-- Bookmark Button Form -->
-                                <form action="{{ route('kandidat.lowongan.bookmark', $job->id) }}" method="POST">
-                                    @csrf
-                                    <button type="submit"
-                                            class="w-9 h-9 rounded-xl flex items-center justify-center transition-colors focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:outline-none {{ $isSaved ? 'bg-rose-50 text-rose-600 hover:bg-rose-100' : 'bg-slate-50 text-slate-400 hover:bg-slate-100 hover:text-slate-600' }}"
-                                            aria-label="{{ $isSaved ? 'Hapus bookmark lowongan ' . $job->title : 'Simpan lowongan ' . $job->title }}">
-                                        <svg class="w-5 h-5 {{ $isSaved ? 'fill-current' : 'stroke-current fill-none' }}" viewBox="0 0 24 24" stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                                <div class="flex items-center gap-2">
+                                    <!-- MatchingEngine Score Badge -->
+                                    <div class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-black border shadow-2xs {{ $badgeStyle }}"
+                                         title="Kesesuaian dengan kebutuhan aksesibilitas profil Anda: {{ $score }}%">
+                                        <svg class="w-3.5 h-3.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                                         </svg>
-                                    </button>
-                                </form>
+                                        <span>{{ $score }}% Cocok</span>
+                                    </div>
+
+                                    <!-- Bookmark Button Form -->
+                                    <form action="{{ route('kandidat.lowongan.bookmark', $job->id) }}" method="POST">
+                                        @csrf
+                                        <button type="submit"
+                                                class="w-9 h-9 rounded-xl flex items-center justify-center transition-colors focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:outline-none {{ $isSaved ? 'bg-rose-50 text-rose-600 hover:bg-rose-100' : 'bg-slate-50 text-slate-400 hover:bg-slate-100 hover:text-slate-600' }}"
+                                                aria-label="{{ $isSaved ? 'Hapus bookmark lowongan ' . $job->title : 'Simpan lowongan ' . $job->title }}">
+                                            <svg class="w-5 h-5 {{ $isSaved ? 'fill-current' : 'stroke-current fill-none' }}" viewBox="0 0 24 24" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                                            </svg>
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
 
                             <!-- Position Title -->

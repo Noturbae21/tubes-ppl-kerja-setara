@@ -43,8 +43,8 @@ class ActivityLog extends Model
      * Create a new activity log entry.
      *
      * @param  string  $actionType  e.g. 'login', 'create', 'update', 'delete', 'verify', 'block'
-     * @param  string  $description Human-readable description
-     * @param  array   $options     Optional overrides: level, result, user, ip, target_type, target_id, metadata
+     * @param  string  $description  Human-readable description
+     * @param  array  $options  Optional overrides: level, result, user, ip, target_type, target_id, metadata
      */
     public static function log(string $actionType, string $description, array $options = []): static
     {

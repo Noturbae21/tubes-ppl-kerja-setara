@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Services\MatchingService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class JobVacancy extends Model
 {
@@ -366,5 +367,53 @@ class JobVacancy extends Model
     public function calculateMatchPercentage(?User $user = null): int
     {
         return $this->calculateMatching($user)['percentage'];
+    }
+
+    /**
+     * Exact MatchingEngine score percentage: (Matched Facilities / Total User Preferences) * 100.
+     */
+    public function calculateMatchScore(?User $user = null): int
+    {
+        $user = $user ?? Auth::user();
+        if (! $user) {
+            $user = User::where('email', 'nadia@kerjasetara.id')->orWhere('role', 'kandidat')->first();
+        }
+
+        $preference = $user?->accessibilityPreference;
+
+        if ($preference) {
+            $userPreferences = $preference->getActivePreferencesWithMetadata();
+        } else {
+            $cat = $user?->accessibility_category ?? 'fisik';
+            $dummy = new UserAccessibilityPreference(['category' => $cat]);
+            $userPreferences = $dummy->getActivePreferencesWithMetadata();
+        }
+
+        $totalUserPreferences = count($userPreferences);
+        if ($totalUserPreferences === 0) {
+            return 100;
+        }
+
+        // Job and company facilities
+        $jobFacilities = array_map('strtolower', (array) ($this->accessibility_tags ?? []));
+        if ($this->company && is_array($this->company->accessibility_features)) {
+            $jobFacilities = array_unique(array_merge(
+                $jobFacilities,
+                array_map('strtolower', $this->company->accessibility_features)
+            ));
+        }
+
+        $matchedFacilities = 0;
+        foreach ($userPreferences as $key => $pref) {
+            $tags = $pref['tags'] ?? [$key];
+            foreach ($tags as $tag) {
+                if (in_array(strtolower($tag), $jobFacilities, true)) {
+                    $matchedFacilities++;
+                    break;
+                }
+            }
+        }
+
+        return (int) round(($matchedFacilities / $totalUserPreferences) * 100);
     }
 }
