@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\AdminFacilityController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\HomeController;
@@ -103,6 +104,16 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/lowongan', [AdminDashboardController::class, 'vacancies'])->name('lowongan');
         Route::post('/lowongan/{vacancy}/toggle-status', [AdminDashboardController::class, 'toggleVacancyStatus'])->name('lowongan.toggle');
         Route::post('/companies/{company}/toggle-certified', [AdminDashboardController::class, 'toggleCompanyCertification'])->name('companies.toggle-certified');
+
+        // Master Data Fasilitas Aksesibilitas
+        Route::get('/facilities', [AdminFacilityController::class, 'index'])->name('facilities.index');
+        Route::post('/facilities', [AdminFacilityController::class, 'store'])->name('facilities.store');
+        Route::get('/facilities/{facility}', [AdminFacilityController::class, 'show'])->name('facilities.show');
+        Route::put('/facilities/{facility}', [AdminFacilityController::class, 'update'])->name('facilities.update');
+        Route::post('/facilities/{facility}/toggle-status', [AdminFacilityController::class, 'toggleStatus'])->name('facilities.toggle-status');
+        Route::delete('/facilities/{facility}', [AdminFacilityController::class, 'destroy'])->name('facilities.destroy');
+        Route::get('/facilities/{facility}/icon', [AdminFacilityController::class, 'icon'])->name('facilities.icon');
+        Route::get('/fasilitas', fn () => redirect()->route('admin.facilities.index'))->name('fasilitas');
 
         // Settings & Accessibility Taxonomies
         Route::get('/settings', [AdminDashboardController::class, 'settings'])->name('settings');

@@ -40,6 +40,11 @@ class JobController extends Controller
         // 2. Programmatically compare against the job vacancy's available facilities
         $jobFacilities = array_map('strtolower', (array) ($vacancy->accessibility_tags ?? []));
 
+        if ($vacancy->relationLoaded('facilities') || $vacancy->facilities()->exists()) {
+            $attachedDbFacilities = $vacancy->facilities->pluck('name')->map(fn ($n) => strtolower($n))->all();
+            $jobFacilities = array_unique(array_merge($jobFacilities, $attachedDbFacilities));
+        }
+
         if ($vacancy->company && is_array($vacancy->company->accessibility_features)) {
             $jobFacilities = array_unique(array_merge(
                 $jobFacilities,

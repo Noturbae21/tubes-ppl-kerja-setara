@@ -10,14 +10,18 @@
 
     // Facilities multi-select
     dropdownOpen: false,
-    selectedFacilities: ['kursi_roda', 'toilet_disabilitas', 'bisindo'],
-    facilitiesList: [
-        { id: 'kursi_roda', label: 'Akses Kursi Roda', desc: 'Ramp, lift, dan pintu lebar' },
-        { id: 'toilet_disabilitas', label: 'Toilet Aksesibel', desc: 'Pegangan rambat & ruang luas' },
-        { id: 'ruang_tenang', label: 'Ruang Tenang / Neurodiverse', desc: 'Quiet room fokus' },
-        { id: 'bisindo', label: 'Layanan Penerjemah Isyarat', desc: 'Interpreter BISINDO saat meeting' },
-        { id: 'screen_reader', label: 'Dukungan Pembaca Layar', desc: 'Workstation screen reader friendly' }
-    ],
+    selectedFacilities: {{ isset($activeFacilities) && $activeFacilities->isNotEmpty() ? Js::from($activeFacilities->take(2)->pluck('id')->map(fn($id) => (string) $id)) : "['kursi_roda', 'toilet_disabilitas', 'bisindo']" }},
+    facilitiesList: {{ isset($activeFacilities) && $activeFacilities->isNotEmpty() ? Js::from($activeFacilities->map(fn($f) => [
+        'id' => (string) $f->id,
+        'label' => $f->name,
+        'desc' => $f->description,
+    ])) : json_encode([
+        ['id' => 'kursi_roda', 'label' => 'Akses Kursi Roda', 'desc' => 'Ramp, lift, dan pintu lebar'],
+        ['id' => 'toilet_disabilitas', 'label' => 'Toilet Aksesibel', 'desc' => 'Pegangan rambat & ruang luas'],
+        ['id' => 'ruang_tenang', 'label' => 'Ruang Tenang / Neurodiverse', 'desc' => 'Quiet room fokus'],
+        ['id' => 'bisindo', 'label' => 'Layanan Penerjemah Isyarat', 'desc' => 'Interpreter BISINDO saat meeting'],
+        ['id' => 'screen_reader', 'label' => 'Dukungan Pembaca Layar', 'desc' => 'Workstation screen reader friendly']
+    ]) }},
     toggleFacility(id) {
         if (this.selectedFacilities.includes(id)) {
             this.selectedFacilities = this.selectedFacilities.filter(f => f !== id);

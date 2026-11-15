@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Hrd;
 
 use App\Http\Controllers\Controller;
+use App\Models\Facility;
 use App\Models\JobVacancy;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class HrdVacancyController extends Controller
 {
@@ -52,8 +54,9 @@ class HrdVacancyController extends Controller
         }
 
         $vacancies = $vacanciesQuery->orderBy('created_at', 'desc')->paginate(10)->withQueryString();
+        $activeFacilities = Facility::where('is_active', true)->orderBy('name')->get();
 
-        return view('hrd.vacancies.index', compact('company', 'vacancies', 'counts', 'tab', 'search'));
+        return view('hrd.vacancies.index', compact('company', 'vacancies', 'counts', 'tab', 'search', 'activeFacilities'));
     }
 
     /**
@@ -63,8 +66,9 @@ class HrdVacancyController extends Controller
     {
         $user = Auth::user();
         $company = $user->companyProfile ?? $user->getOrCreateCompanyProfile();
+        $activeFacilities = Facility::where('is_active', true)->orderBy('name')->get();
 
-        return view('hrd.vacancies.create', compact('company'));
+        return view('hrd.vacancies.create', compact('company', 'activeFacilities'));
     }
 
     /**
@@ -131,6 +135,27 @@ class HrdVacancyController extends Controller
             'deadline' => ! empty($validated['deadline']) ? Carbon::parse($validated['deadline']) : Carbon::now()->addDays(30),
         ]);
 
+        // Sync active facilities to relational pivot table
+        if (! empty($validated['accessibility_tags'])) {
+            $activeFacilities = Facility::where('is_active', true)->get();
+            $facilityIds = [];
+
+            foreach ($validated['accessibility_tags'] as $tag) {
+                $match = $activeFacilities->first(function ($f) use ($tag) {
+                    return (string) $f->id === (string) $tag
+                        || Str::slug($f->name, '_') === (string) $tag
+                        || strtolower($f->name) === strtolower($tag);
+                });
+                if ($match) {
+                    $facilityIds[] = $match->id;
+                }
+            }
+
+            if (! empty($facilityIds)) {
+                $vacancy->facilities()->sync($facilityIds);
+            }
+        }
+
         $message = $isActive
             ? "Lowongan '{$vacancy->title}' berhasil dipublikasikan dan kini dapat dilamar oleh kandidat!"
             : "Draf lowongan '{$vacancy->title}' berhasil disimpan.";
@@ -145,6 +170,18 @@ class HrdVacancyController extends Controller
     {
         $this->authorizeCompanyVacancy($vacancy);
 
+        // All active facilities + any existing attached facilities (even if now inactive)
+        $attachedFacilityIds = $vacancy->facilities()->pluck('facilities.id')->toArray();
+        $allowedFacilities = Facility::where('is_active', true)
+            ->orWhereIn('id', $attachedFacilityIds)
+            ->get()
+            ->map(fn ($f) => [
+                'id' => $f->id,
+                'name' => $f->name,
+                'is_active' => $f->is_active,
+                'is_attached' => in_array($f->id, $attachedFacilityIds, true),
+            ]);
+
         return response()->json([
             'id' => $vacancy->id,
             'title' => $vacancy->title,
@@ -153,6 +190,8 @@ class HrdVacancyController extends Controller
             'salary_min' => $vacancy->salary_min,
             'salary_max' => $vacancy->salary_max,
             'accessibility_tags' => (array) ($vacancy->accessibility_tags ?? []),
+            'attached_facilities' => $attachedFacilityIds,
+            'allowed_facilities' => $allowedFacilities,
             'is_active' => $vacancy->is_active,
             'deadline' => $vacancy->deadline ? $vacancy->deadline->format('Y-m-d') : null,
         ]);
@@ -180,6 +219,26 @@ class HrdVacancyController extends Controller
 
         if (isset($validated['accessibility_tags'])) {
             $updateData['accessibility_tags'] = $validated['accessibility_tags'];
+
+            // Sync facilities: allowed are active facilities + already attached facilities
+            $attachedIds = $vacancy->facilities()->pluck('facilities.id')->toArray();
+            $allowedFacilities = Facility::where('is_active', true)
+                ->orWhereIn('id', $attachedIds)
+                ->get();
+
+            $facilityIds = [];
+            foreach ($validated['accessibility_tags'] as $tag) {
+                $match = $allowedFacilities->first(function ($f) use ($tag) {
+                    return (string) $f->id === (string) $tag
+                        || Str::slug($f->name, '_') === (string) $tag
+                        || strtolower($f->name) === strtolower($tag);
+                });
+                if ($match) {
+                    $facilityIds[] = $match->id;
+                }
+            }
+
+            $vacancy->facilities()->sync($facilityIds);
         }
 
         // Parsing salary estimate

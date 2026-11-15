@@ -313,52 +313,67 @@
                             </template>
                         </div>
 
-                        <div class="space-y-1.5 text-xs text-slate-700">
-                            <label class="flex items-center gap-2 cursor-pointer p-1 rounded hover:bg-white transition-colors">
-                                <input type="checkbox"
-                                       name="accessibility_tags[]"
-                                       value="kursi_roda"
-                                       :checked="editData.tags.includes('kursi_roda')"
-                                       @change="toggleEditTag('kursi_roda')"
-                                       class="rounded text-blue-700 focus:ring-blue-600 w-4 h-4">
-                                <span>Akses Kursi Roda</span>
-                            </label>
-                            <label class="flex items-center gap-2 cursor-pointer p-1 rounded hover:bg-white transition-colors">
-                                <input type="checkbox"
-                                       name="accessibility_tags[]"
-                                       value="bisindo"
-                                       :checked="editData.tags.includes('bisindo')"
-                                       @change="toggleEditTag('bisindo')"
-                                       class="rounded text-blue-700 focus:ring-blue-600 w-4 h-4">
-                                <span>Penerjemah Isyarat</span>
-                            </label>
-                            <label class="flex items-center gap-2 cursor-pointer p-1 rounded hover:bg-white transition-colors">
-                                <input type="checkbox"
-                                       name="accessibility_tags[]"
-                                       value="jam_fleksibel"
-                                       :checked="editData.tags.includes('jam_fleksibel')"
-                                       @change="toggleEditTag('jam_fleksibel')"
-                                       class="rounded text-blue-700 focus:ring-blue-600 w-4 h-4">
-                                <span>Jam Kerja Fleksibel & Ruang Tenang</span>
-                            </label>
-                            <label class="flex items-center gap-2 cursor-pointer p-1 rounded hover:bg-white transition-colors">
-                                <input type="checkbox"
-                                       name="accessibility_tags[]"
-                                       value="toilet_disabilitas"
-                                       :checked="editData.tags.includes('toilet_disabilitas')"
-                                       @change="toggleEditTag('toilet_disabilitas')"
-                                       class="rounded text-blue-700 focus:ring-blue-600 w-4 h-4">
-                                <span>Toilet Aksesibel</span>
-                            </label>
-                            <label class="flex items-center gap-2 cursor-pointer p-1 rounded hover:bg-white transition-colors">
-                                <input type="checkbox"
-                                       name="accessibility_tags[]"
-                                       value="screen_reader"
-                                       :checked="editData.tags.includes('screen_reader')"
-                                       @change="toggleEditTag('screen_reader')"
-                                       class="rounded text-blue-700 focus:ring-blue-600 w-4 h-4">
-                                <span>Screen Reader Software</span>
-                            </label>
+                        <div class="space-y-1.5 text-xs text-slate-700 max-h-48 overflow-y-auto pr-1">
+                            @if(isset($activeFacilities) && $activeFacilities->isNotEmpty())
+                                @foreach($activeFacilities as $fac)
+                                    @php $slug = \Illuminate\Support\Str::slug($fac->name, '_'); @endphp
+                                    <label class="flex items-center gap-2 cursor-pointer p-1 rounded hover:bg-white transition-colors">
+                                        <input type="checkbox"
+                                               name="accessibility_tags[]"
+                                               value="{{ (string) $fac->id }}"
+                                               :checked="editData.tags.includes('{{ (string) $fac->id }}') || editData.tags.includes('{{ $slug }}') || editData.tags.includes('{{ $fac->name }}')"
+                                               @change="toggleEditTag('{{ (string) $fac->id }}')"
+                                               class="rounded text-blue-700 focus:ring-blue-600 w-4 h-4">
+                                        <span>{{ $fac->name }}</span>
+                                    </label>
+                                @endforeach
+                            @else
+                                <label class="flex items-center gap-2 cursor-pointer p-1 rounded hover:bg-white transition-colors">
+                                    <input type="checkbox"
+                                           name="accessibility_tags[]"
+                                           value="kursi_roda"
+                                           :checked="editData.tags.includes('kursi_roda')"
+                                           @change="toggleEditTag('kursi_roda')"
+                                           class="rounded text-blue-700 focus:ring-blue-600 w-4 h-4">
+                                    <span>Akses Kursi Roda</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer p-1 rounded hover:bg-white transition-colors">
+                                    <input type="checkbox"
+                                           name="accessibility_tags[]"
+                                           value="bisindo"
+                                           :checked="editData.tags.includes('bisindo')"
+                                           @change="toggleEditTag('bisindo')"
+                                           class="rounded text-blue-700 focus:ring-blue-600 w-4 h-4">
+                                    <span>Penerjemah Isyarat</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer p-1 rounded hover:bg-white transition-colors">
+                                    <input type="checkbox"
+                                           name="accessibility_tags[]"
+                                           value="jam_fleksibel"
+                                           :checked="editData.tags.includes('jam_fleksibel')"
+                                           @change="toggleEditTag('jam_fleksibel')"
+                                           class="rounded text-blue-700 focus:ring-blue-600 w-4 h-4">
+                                    <span>Jam Kerja Fleksibel & Ruang Tenang</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer p-1 rounded hover:bg-white transition-colors">
+                                    <input type="checkbox"
+                                           name="accessibility_tags[]"
+                                           value="toilet_disabilitas"
+                                           :checked="editData.tags.includes('toilet_disabilitas')"
+                                           @change="toggleEditTag('toilet_disabilitas')"
+                                           class="rounded text-blue-700 focus:ring-blue-600 w-4 h-4">
+                                    <span>Toilet Aksesibel</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer p-1 rounded hover:bg-white transition-colors">
+                                    <input type="checkbox"
+                                           name="accessibility_tags[]"
+                                           value="screen_reader"
+                                           :checked="editData.tags.includes('screen_reader')"
+                                           @change="toggleEditTag('screen_reader')"
+                                           class="rounded text-blue-700 focus:ring-blue-600 w-4 h-4">
+                                    <span>Screen Reader Software</span>
+                                </label>
+                            @endif
                         </div>
                     </div>
                     <p class="text-[10px] text-slate-400 mt-1">Pilih fasilitas yang benar-benar tersedia untuk kandidat.</p>

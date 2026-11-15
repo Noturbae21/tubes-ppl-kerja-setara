@@ -47,6 +47,11 @@ class JobVacancy extends Model
         return $this->hasMany(SavedJob::class, 'job_vacancy_id');
     }
 
+    public function facilities()
+    {
+        return $this->belongsToMany(Facility::class, 'facility_job_vacancy');
+    }
+
     // Scopes
     public function scopeActive($query)
     {
@@ -228,12 +233,35 @@ class JobVacancy extends Model
         $allFacilities = self::availableFacilities();
         $details = [];
 
+        // 1. Pull dynamic facilities from database relation if attached
+        if ($this->relationLoaded('facilities') || $this->facilities()->exists()) {
+            foreach ($this->facilities as $dbFacility) {
+                $slug = \Illuminate\Support\Str::slug($dbFacility->name, '_');
+                $details[$slug] = [
+                    'id' => $dbFacility->id,
+                    'identifier' => $dbFacility->identifier,
+                    'label' => $dbFacility->name,
+                    'name' => $dbFacility->name,
+                    'icon' => $dbFacility->icon_url,
+                    'svg' => $dbFacility->svg_content,
+                    'desc' => $dbFacility->description,
+                    'badge' => $dbFacility->name,
+                    'is_active' => $dbFacility->is_active,
+                ];
+            }
+        }
+
+        // 2. Also map legacy or direct tags
         foreach ($tags as $tag) {
-            if (isset($allFacilities[$tag])) {
-                $details[$tag] = $allFacilities[$tag];
+            $tagKey = (string) $tag;
+            if (isset($details[$tagKey])) {
+                continue;
+            }
+            if (isset($allFacilities[$tagKey])) {
+                $details[$tagKey] = $allFacilities[$tagKey];
             } else {
-                $details[$tag] = [
-                    'label' => ucwords(str_replace('_', ' ', $tag)),
+                $details[$tagKey] = [
+                    'label' => ucwords(str_replace('_', ' ', $tagKey)),
                     'icon' => 'check-circle',
                     'desc' => 'Fasilitas aksesibilitas terverifikasi di lokasi kerja.',
                     'category' => 'umum',
