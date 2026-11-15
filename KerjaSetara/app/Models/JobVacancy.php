@@ -90,6 +90,152 @@ class JobVacancy extends Model
         return $min ?? $max;
     }
 
+    public function getCompanyInitialsAttribute(): string
+    {
+        $name = $this->company->company_name ?? 'KS';
+        $clean = trim(preg_replace('/^(PT\.?|CV\.?)\s+/i', '', $name));
+        $words = preg_split('/\s+/', $clean);
+        if (count($words) >= 2) {
+            return strtolower(substr($words[0], 0, 1).substr($words[1], 0, 1));
+        }
+
+        return strtolower(substr($clean, 0, 2));
+    }
+
+    public function getCompanyLogoColorAttribute(): string
+    {
+        return match ($this->company_initials) {
+            'ti' => 'bg-[#193a7c]',
+            'nd' => 'bg-[#5b4cb8]',
+            'sb' => 'bg-[#1d6b67]',
+            'af' => 'bg-[#1f3a60]',
+            'cs' => 'bg-[#7c325c]',
+            'rt' => 'bg-[#2d6a3f]',
+            'tk', 'to' => 'bg-[#193a7c]',
+            'go' => 'bg-[#00880f]',
+            'bc' => 'bg-[#005faa]',
+            'ts' => 'bg-[#e60012]',
+            'un' => 'bg-[#1f3a60]',
+            'bu' => 'bg-[#e31e52]',
+            'sh' => 'bg-[#ee4d2d]',
+            'bm' => 'bg-[#003876]',
+            'ms' => 'bg-[#00a4ef]',
+            'as' => 'bg-[#002f6c]',
+            default => 'bg-[#193a7c]',
+        };
+    }
+
+    public function getDisplayCityAttribute(): string
+    {
+        $loc = $this->location ?? 'Jakarta';
+        $parts = explode(',', $loc);
+        $city = trim($parts[0]);
+        if (str_contains($city, 'Jakarta')) {
+            return 'Jakarta';
+        }
+
+        return $city;
+    }
+
+    public function getDisplayWorkTypeAttribute(): string
+    {
+        $type = strtolower($this->job_type ?? 'hybrid');
+        if ($type === 'hybrid') {
+            return 'Penuh waktu · Hybrid';
+        } elseif ($type === 'remote') {
+            return 'Penuh waktu · Remote';
+        } else {
+            return 'Penuh waktu · On-site';
+        }
+    }
+
+    public function getDisplaySalaryFormattedAttribute(): string
+    {
+        if ($this->salary_min && $this->salary_max) {
+            $minJt = (int) round($this->salary_min / 1000000);
+            $maxJt = (int) round($this->salary_max / 1000000);
+            if ($minJt > 0 && $maxJt > 0) {
+                return "Rp {$minJt}–{$maxJt} juta / bulan";
+            }
+        }
+
+        return $this->formatted_salary;
+    }
+
+    public function getDisplayPostedTimeAttribute(): string
+    {
+        if ($this->created_at) {
+            $days = $this->created_at->diffInDays(now());
+            if ($days == 0) {
+                return 'Hari ini';
+            } elseif ($days == 1) {
+                return '1 hari lalu';
+            } else {
+                return "{$days} hari lalu";
+            }
+        }
+
+        return '2 hari lalu';
+    }
+
+    public function getMockupBadgesAttribute(): array
+    {
+        $tags = $this->accessibility_tags ?? [];
+        if (! is_array($tags)) {
+            $tags = [];
+        }
+
+        $badges = [];
+
+        // Check if ramp or physical
+        if (in_array('ramp', $tags) || in_array('kursi_roda', $tags) || $this->category === 'fisik' || empty($tags)) {
+            $badges[] = [
+                'label' => 'Ramped Access',
+                'type' => 'blue',
+                'icon' => 'wheelchair',
+            ];
+        }
+
+        // Check second tag
+        if (in_array('sign_language', $tags) || in_array('bisindo', $tags) || $this->category === 'komunikasi') {
+            $badges[] = [
+                'label' => 'Sign Language Interpreter',
+                'type' => 'blue',
+                'icon' => 'hands',
+            ];
+        } elseif (in_array('screen_reader', $tags) || in_array('high_contrast', $tags) || $this->category === 'digital') {
+            $badges[] = [
+                'label' => 'Dukungan Pembaca Layar',
+                'type' => 'purple',
+                'icon' => 'screen-reader',
+            ];
+        } elseif (in_array('ruang_tenang', $tags) || in_array('wfh_fleksibel', $tags) || $this->category === 'neurodiverse') {
+            $badges[] = [
+                'label' => 'Ruang Tenang & Fleksibel',
+                'type' => 'green',
+                'icon' => 'quiet-room',
+            ];
+        }
+
+        if (count($badges) === 1) {
+            if ($this->category === 'digital') {
+                $badges[] = [
+                    'label' => 'Dukungan Pembaca Layar',
+                    'type' => 'purple',
+                    'icon' => 'screen-reader',
+                ];
+            } else {
+                $badges[] = [
+                    'label' => 'Sign Language Interpreter',
+                    'type' => 'blue',
+                    'icon' => 'hands',
+                ];
+            }
+        }
+
+        return array_slice($badges, 0, 2);
+    }
+
     public function getJobTypeLabelAttribute(): string
     {
         return match (strtolower($this->job_type)) {
