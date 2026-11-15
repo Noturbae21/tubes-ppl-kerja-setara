@@ -51,6 +51,17 @@ class LoginController extends Controller
         $request->session()->regenerate();
         $user = Auth::user();
 
+        // Check if user is blocked / deactivated
+        if ($user->isBlocked()) {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            throw ValidationException::withMessages([
+                'email' => 'Akun Anda telah dinonaktifkan atau diblokir oleh Administrator. Silakan hubungi tim dukungan kami.',
+            ]);
+        }
+
         // Validate role alignment if role was explicitly selected in the UI
         if ($requestedRole) {
             $normalizedRole = $requestedRole === 'kandidat' ? 'user' : ($requestedRole === 'company' ? 'hrd' : $requestedRole);
@@ -106,6 +117,11 @@ class LoginController extends Controller
      */
     public function redirectBasedOnRole($user): RedirectResponse
     {
+        if ($user->must_change_password) {
+            return redirect()->route('password.first_time')
+                ->with('info', 'Anda menggunakan kata sandi sementara. Silakan tentukan kata sandi baru Anda.');
+        }
+
         if ($user->isAdmin()) {
             return redirect()->intended(route('admin.dashboard'))
                 ->with('success', 'Selamat datang di Panel Administrator KerjaSetara, '.$user->name.'.');

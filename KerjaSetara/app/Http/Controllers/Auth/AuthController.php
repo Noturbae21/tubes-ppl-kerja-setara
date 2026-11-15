@@ -72,6 +72,44 @@ class AuthController extends Controller
         return app(LoginController::class)->login($request);
     }
 
+    // ─── First Time Password Change ──────────────────────────────────────────
+
+    public function showFirstTimePassword()
+    {
+        $user = Auth::user();
+        if (! $user->must_change_password) {
+            return app(LoginController::class)->redirectBasedOnRole($user);
+        }
+
+        return view('auth.first_time_password', compact('user'));
+    }
+
+    public function updateFirstTimePassword(Request $request)
+    {
+        $request->validate([
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+        ], [
+            'password.required' => 'Kata sandi baru wajib diisi.',
+            'password.min' => 'Kata sandi minimal terdiri dari 8 karakter.',
+            'password.confirmed' => 'Konfirmasi kata sandi tidak cocok.',
+        ]);
+
+        $user = Auth::user();
+        $user->update([
+            'password' => Hash::make($request->password),
+            'must_change_password' => false,
+        ]);
+
+        \App\Models\ActivityLog::log(
+            'update',
+            "Pengguna {$user->name} memperbarui kata sandi pertama kali (alur kata sandi sementara)",
+            ['target_type' => 'user', 'target_id' => $user->id]
+        );
+
+        return app(LoginController::class)->redirectBasedOnRole($user)
+            ->with('success', 'Kata sandi baru Anda berhasil disimpan. Selamat datang di KerjaSetara!');
+    }
+
     // ─── Logout ───────────────────────────────────────────────────────────────
 
     public function logout(Request $request)

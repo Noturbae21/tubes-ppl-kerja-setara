@@ -203,5 +203,93 @@ class UserSeeder extends Seeder
                 'role' => 'admin',
             ]
         );
+        // Mock Users from Platform Management Design Specification
+        User::firstOrCreate(
+            ['email' => 'nadia.saraswati@example.com'],
+            [
+                'name' => 'Nadia Saraswati',
+                'full_name' => 'Nadia Saraswati',
+                'password' => Hash::make('password'),
+                'role' => 'kandidat',
+                'status' => 'active',
+            ]
+        );
+
+        $ptTekno = User::firstOrCreate(
+            ['email' => 'kontak@teknologi-inovasi.test'],
+            [
+                'name' => 'PT Teknologi Inovasi',
+                'full_name' => 'PT Teknologi Inovasi',
+                'password' => Hash::make('password'),
+                'role' => 'hrd',
+                'status' => 'active',
+            ]
+        );
+        \App\Models\CompanyProfile::firstOrCreate(
+            ['user_id' => $ptTekno->id],
+            [
+                'company_name' => 'PT Teknologi Inovasi',
+                'description' => 'Solusi teknologi inklusif masa depan.',
+                'industry' => 'Teknologi Informasi',
+                'location' => 'Jakarta Pusat',
+                'accessibility_features' => ['ramp', 'screen_reader'],
+                'is_inclusive_certified' => true,
+            ]
+        );
+
+        User::firstOrCreate(
+            ['email' => 'budi.santoso@example.com'],
+            [
+                'name' => 'Budi Santoso',
+                'full_name' => 'Budi Santoso',
+                'password' => Hash::make('password'),
+                'role' => 'kandidat',
+                'status' => 'active',
+            ]
+        );
+
+        $ptNusa = User::firstOrCreate(
+            ['email' => 'kontak@nusadigital.test'],
+            [
+                'name' => 'PT Nusa Digital',
+                'full_name' => 'PT Nusa Digital',
+                'password' => Hash::make('password'),
+                'role' => 'hrd',
+                'status' => 'active',
+            ]
+        );
+        \App\Models\CompanyProfile::firstOrCreate(
+            ['user_id' => $ptNusa->id],
+            [
+                'company_name' => 'PT Nusa Digital',
+                'description' => 'Digital Agency ramah talenta disabilitas.',
+                'industry' => 'Digital Creative',
+                'location' => 'Bandung',
+                'accessibility_features' => ['ruang_tenang', 'toilet_khusus'],
+                'is_inclusive_certified' => true,
+            ]
+        );
+
+        User::firstOrCreate(
+            ['email' => 'siti.rahmawati@example.com'],
+            [
+                'name' => 'Siti Rahmawati',
+                'full_name' => 'Siti Rahmawati',
+                'password' => Hash::make('password'),
+                'role' => 'kandidat',
+                'status' => 'active',
+            ]
+        );
+
+        User::firstOrCreate(
+            ['email' => 'fakhri@kerjasetara.id'],
+            [
+                'name' => 'Fakhri Izzul Haq',
+                'full_name' => 'Fakhri Izzul Haq',
+                'password' => Hash::make('password'),
+                'role' => 'admin',
+                'status' => 'active',
+            ]
+        );
     }
 }

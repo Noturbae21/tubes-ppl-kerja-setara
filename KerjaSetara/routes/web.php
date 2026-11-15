@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Hrd\HrdApplicantController;
@@ -57,6 +58,10 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middl
 
 // Candidate / General Dashboard
 Route::middleware('auth')->group(function () {
+    // Alur Dukungan Kata Sandi Sementara / Ganti Password Pertama
+    Route::get('/ganti-password-pertama', [AuthController::class, 'showFirstTimePassword'])->name('password.first_time');
+    Route::post('/ganti-password-pertama', [AuthController::class, 'updateFirstTimePassword'])->name('password.first_time.update');
+
     Route::get('/dashboard', function () {
         $user = auth()->user();
 
@@ -84,9 +89,15 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/', fn () => redirect()->route('admin.dashboard'));
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
-        // User Management
-        Route::get('/users', [AdminDashboardController::class, 'users'])->name('users');
-        Route::delete('/users/{user}', [AdminDashboardController::class, 'destroyUser'])->name('users.destroy');
+        // User Management (Kelola User)
+        Route::get('/users', [AdminUserController::class, 'index'])->name('users');
+        Route::post('/users', [AdminUserController::class, 'store'])->name('users.store');
+        Route::get('/users/{user}', [AdminUserController::class, 'show'])->name('users.show');
+        Route::put('/users/{user}', [AdminUserController::class, 'update'])->name('users.update');
+        Route::post('/users/{user}/toggle-status', [AdminUserController::class, 'toggleStatus'])->name('users.toggle-status');
+        Route::post('/users/{user}/block', [AdminUserController::class, 'block'])->name('users.block');
+        Route::post('/users/{user}/activate', [AdminUserController::class, 'activate'])->name('users.activate');
+        Route::delete('/users/{user}', [AdminUserController::class, 'destroy'])->name('users.destroy');
 
         // Job Vacancies Moderation
         Route::get('/lowongan', [AdminDashboardController::class, 'vacancies'])->name('lowongan');

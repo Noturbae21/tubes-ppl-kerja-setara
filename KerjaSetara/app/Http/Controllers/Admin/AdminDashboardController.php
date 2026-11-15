@@ -55,57 +55,19 @@ class AdminDashboardController extends Controller
     }
 
     /**
-     * Display User Management Panel.
+     * Display User Management Panel (Forwarded to dedicated AdminUserController).
      */
     public function users(Request $request)
     {
-        $roleFilter = $request->query('role', 'all');
-        $search = $request->query('search', '');
-
-        $query = User::with('companyProfile')->latest();
-
-        if ($roleFilter !== 'all') {
-            if ($roleFilter === 'user' || $roleFilter === 'kandidat') {
-                $query->whereIn('role', ['user', 'kandidat']);
-            } else {
-                $query->where('role', $roleFilter);
-            }
-        }
-
-        if (! empty($search)) {
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'LIKE', "%{$search}%")
-                    ->orWhere('email', 'LIKE', "%{$search}%")
-                    ->orWhere('full_name', 'LIKE', "%{$search}%");
-            });
-        }
-
-        $users = $query->paginate(10)->withQueryString();
-
-        $roleCounts = [
-            'all' => User::count(),
-            'kandidat' => User::whereIn('role', ['kandidat', 'user'])->count(),
-            'hrd' => User::where('role', 'hrd')->count(),
-            'admin' => User::where('role', 'admin')->count(),
-        ];
-
-        return view('admin.users.index', compact('users', 'roleFilter', 'search', 'roleCounts'));
+        return app(AdminUserController::class)->index($request);
     }
 
     /**
-     * Delete a user from the platform (with safety checks).
+     * Delete a user from the platform (with safety checks and relational cleanup).
      */
     public function destroyUser(User $user)
     {
-        // Prevent deleting oneself
-        if (auth()->id() === $user->id) {
-            return back()->with('error', 'Anda tidak dapat menghapus akun administrator Anda sendiri.');
-        }
-
-        $userName = $user->name;
-        $user->delete();
-
-        return back()->with('success', "Akun pengguna {$userName} berhasil dihapus dari sistem.");
+        return app(AdminUserController::class)->destroy($user);
     }
 
     /**

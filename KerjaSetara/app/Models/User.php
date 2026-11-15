@@ -20,6 +20,8 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'status',
+        'must_change_password',
         'phone',
         'city',
         'bio',
@@ -39,7 +41,43 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'must_change_password' => 'boolean',
         ];
+    }
+
+    public function isActive(): bool
+    {
+        return ($this->status ?? 'active') === 'active';
+    }
+
+    public function isBlocked(): bool
+    {
+        return $this->status === 'blocked';
+    }
+
+    public function getIdentifierAttribute(): string
+    {
+        $prefix = match ($this->role) {
+            'admin' => 'KS-A',
+            'hrd', 'company' => 'KS-C',
+            default => 'KS-U',
+        };
+
+        return sprintf('%s%03d', $prefix, $this->id);
+    }
+
+    public function getRoleLabelAttribute(): string
+    {
+        return match ($this->role) {
+            'admin' => 'Administrator',
+            'hrd', 'company' => 'Perusahaan / HRD',
+            default => 'Kandidat',
+        };
+    }
+
+    public function getStatusLabelAttribute(): string
+    {
+        return $this->isBlocked() ? 'Diblokir' : 'Aktif';
     }
 
     public function accessibilityPreference(): HasOne

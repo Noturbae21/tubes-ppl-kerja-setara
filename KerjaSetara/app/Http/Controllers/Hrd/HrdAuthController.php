@@ -47,6 +47,16 @@ class HrdAuthController extends Controller
                 ]);
             }
 
+            if ($user->isBlocked()) {
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+
+                throw ValidationException::withMessages([
+                    'email' => 'Akun perusahaan Anda telah dinonaktifkan atau diblokir oleh Administrator.',
+                ]);
+            }
+
             // Ensure HRD user has a company profile
             if (! $user->companyProfile) {
                 \App\Models\CompanyProfile::create([
@@ -57,6 +67,11 @@ class HrdAuthController extends Controller
                     'location' => 'Jakarta Selatan',
                     'accessibility_features' => [],
                 ]);
+            }
+
+            if ($user->must_change_password) {
+                return redirect()->route('password.first_time')
+                    ->with('info', 'Anda menggunakan kata sandi sementara. Silakan tentukan kata sandi baru Anda.');
             }
 
             return redirect()->route('hrd.dashboard')

@@ -64,9 +64,27 @@ class AdminAuthController extends Controller
                 ]);
             }
 
+            // 4. Check if Admin is blocked
+            if ($user->isBlocked()) {
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+
+                RateLimiter::hit($throttleKey, 60);
+
+                throw ValidationException::withMessages([
+                    'email' => 'Akun Administrator ini telah dinonaktifkan atau diblokir.',
+                ]);
+            }
+
             // Success: clear rate limiter attempts and regenerate session
             RateLimiter::clear($throttleKey);
             $request->session()->regenerate();
+
+            if ($user->must_change_password) {
+                return redirect()->route('password.first_time')
+                    ->with('info', 'Anda menggunakan kata sandi sementara. Silakan tentukan kata sandi baru Anda.');
+            }
 
             return redirect()->intended(route('admin.dashboard'))
                 ->with('success', 'Selamat datang di Panel Manajemen KerjaSetara, '.$user->name.'!');
