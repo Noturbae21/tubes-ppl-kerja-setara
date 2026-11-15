@@ -56,7 +56,7 @@ class AuthController extends Controller
                 ->with('success', 'Akun perusahaan berhasil dibuat! Selamat datang di Portal HRD KerjaSetara, '.$user->name.'.');
         }
 
-        return redirect()->route('dashboard')
+        return redirect()->route('kandidat.home')
             ->with('success', 'Akun berhasil dibuat! Selamat datang di KerjaSetara, '.$user->name.'.');
     }
 
