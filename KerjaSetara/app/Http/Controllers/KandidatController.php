@@ -56,18 +56,15 @@ class KandidatController extends Controller
             $query->where('job_type', $jobType);
         }
 
-        // Authenticated user or demo candidate for matching
+        // Authenticated user (null for guest)
         $user = Auth::user();
-        if (! $user) {
-            $user = User::where('email', 'nadia@kerjasetara.id')->orWhere('role', 'kandidat')->first();
-        }
 
         // Retrieve filtered vacancies
         $allVacancies = $query->get();
 
         // Calculate exact MatchingEngine score for each vacancy
-        $allVacancies->each(function (JobVacancy $job) use ($user) {
-            $job->match_score = $job->calculateMatchScore($user);
+        $allVacancies->each(function (JobVacancy $job) use ($user, $category) {
+            $job->match_score = $job->calculateMatchScore($user, $category !== 'all' ? $category : null);
         });
 
         // Sort vacancies: default 'match' (highest score first)
@@ -305,15 +302,9 @@ class KandidatController extends Controller
      */
     public function applications(Request $request)
     {
-        // Jika belum login, gunakan akun demo kandidat (Nadia) untuk memudahkan evaluasi
         if (! Auth::check()) {
-            $demoUser = User::where('email', 'nadia@kerjasetara.id')->orWhere('role', 'kandidat')->first();
-            if ($demoUser) {
-                Auth::login($demoUser);
-            } else {
-                return redirect()->route('login')
-                    ->with('error', 'Silakan masuk untuk melihat riwayat lamaran Anda.');
-            }
+            return redirect()->route('login')
+                ->with('error', 'Silakan masuk terlebih dahulu untuk melihat riwayat lamaran Anda.');
         }
 
         $user = Auth::user();
@@ -440,20 +431,11 @@ class KandidatController extends Controller
      */
     public function profil(Request $request)
     {
-        // Ambil user yang sedang terautentikasi atau akun kandidat default (untuk mode demo/preview)
         $user = Auth::user();
 
         if (! $user) {
-            $user = User::where('email', 'nadia@kerjasetara.id')
-                ->orWhere('role', 'kandidat')
-                ->first();
-
-            if ($user) {
-                Auth::login($user);
-            } else {
-                return redirect()->route('login')
-                    ->with('error', 'Silakan masuk terlebih dahulu untuk mengakses profil.');
-            }
+            return redirect()->route('login')
+                ->with('error', 'Silakan masuk terlebih dahulu untuk mengakses profil.');
         }
 
         return view('kandidat.profil', compact('user'));
@@ -467,16 +449,8 @@ class KandidatController extends Controller
         $user = Auth::user();
 
         if (! $user) {
-            $user = User::where('email', 'nadia@kerjasetara.id')
-                ->orWhere('role', 'kandidat')
-                ->first();
-
-            if ($user) {
-                Auth::login($user);
-            } else {
-                return redirect()->route('login')
-                    ->with('error', 'Silakan masuk terlebih dahulu.');
-            }
+            return redirect()->route('login')
+                ->with('error', 'Silakan masuk terlebih dahulu untuk memperbarui profil.');
         }
 
         $section = $request->input('_section', 'personal');
@@ -575,7 +549,7 @@ class KandidatController extends Controller
      */
     private function ensureSampleApplicationsExist($user): void
     {
-        if ($user->applications()->count() === 0) {
+        if ($user && $user->email === 'nadia@kerjasetara.id' && $user->applications()->count() === 0) {
             try {
                 (new JobApplicationSeeder)->run();
             } catch (\Throwable $e) {

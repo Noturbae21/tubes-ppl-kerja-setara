@@ -364,7 +364,7 @@ class AdminUserManagementTest extends TestCase
             'password_confirmation' => 'NewSecurePassword123!',
         ]);
 
-        $response->assertRedirect(route('dashboard'));
+        $response->assertRedirect(route('kandidat.home'));
         $this->assertFalse($userWithTempPassword->fresh()->must_change_password);
         $this->assertTrue(Hash::check('NewSecurePassword123!', $userWithTempPassword->fresh()->password));
     }

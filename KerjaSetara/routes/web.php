@@ -21,6 +21,10 @@ use Illuminate\Support\Facades\Route;
 // ─── Public Landing Page ──────────────────────────────────────────────────────
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
+// Cari Kerja & Jobs Direct Routes / Aliases
+Route::get('/cari-kerja', fn () => redirect()->route('kandidat.home'))->name('cari-kerja');
+Route::get('/jobs', fn () => redirect()->route('kandidat.home'))->name('jobs.index');
+
 // Job Detail Direct Routes
 Route::get('/jobs/{id}', [JobController::class, 'show'])->name('jobs.show');
 Route::get('/job/{id}', [JobController::class, 'show'])->name('job.show');
@@ -28,24 +32,28 @@ Route::get('/lowongan/{id}', [JobController::class, 'show'])->name('lowongan.sho
 
 // ─── Kandidat / Job Seeker Portal ─────────────────────────────────────────────
 Route::prefix('kandidat')->name('kandidat.')->group(function () {
+    // Rute Publik (Akses Bebas Guest / Tamu)
     Route::get('/', fn () => redirect()->route('kandidat.home'));
     Route::get('/home', [KandidatController::class, 'index'])->name('home');
     Route::get('/lowongan/{id}', [JobController::class, 'show'])->name('lowongan.show');
-    Route::post('/lowongan/{id}/lamar', [KandidatController::class, 'apply'])->name('lowongan.apply');
-    Route::post('/lowongan/{id}/bookmark', [KandidatController::class, 'toggleBookmark'])->name('lowongan.bookmark');
 
-    // Riwayat Lamaran Saya
-    Route::get('/lamaran', [KandidatController::class, 'applications'])->name('lamaran');
-    Route::get('/riwayat-lamaran', fn () => redirect()->route('kandidat.lamaran'))->name('riwayat');
+    // Rute Privat (Wajib Login & Memiliki Role Kandidat)
+    Route::middleware(['auth', 'role:kandidat'])->group(function () {
+        // Riwayat Lamaran Saya
+        Route::get('/lamaran', [KandidatController::class, 'applications'])->name('lamaran');
+        Route::get('/riwayat-lamaran', fn () => redirect()->route('kandidat.lamaran'))->name('riwayat');
 
-    // Profil & Preferensi Aksesibilitas Kandidat
-    Route::get('/profil', [KandidatController::class, 'profil'])->name('profil');
-    Route::post('/profil', [KandidatController::class, 'updateProfil'])->name('profil.update');
+        // Profil & Preferensi Aksesibilitas Kandidat
+        Route::get('/profil', [KandidatController::class, 'profil'])->name('profil');
+        Route::post('/profil', [KandidatController::class, 'updateProfil'])->name('profil.update');
 
-    // Aksi Interaktif Lamaran (Batalkan, Terima Tawaran, Tolak Tawaran)
-    Route::post('/lamaran/{id}/batal', [KandidatController::class, 'cancelApplication'])->name('lamaran.cancel');
-    Route::post('/lamaran/{id}/terima-tawaran', [KandidatController::class, 'acceptOffer'])->name('lamaran.acceptOffer');
-    Route::post('/lamaran/{id}/tolak-tawaran', [KandidatController::class, 'rejectOffer'])->name('lamaran.rejectOffer');
+        // Aksi Interaktif Lamaran & Bookmark
+        Route::post('/lowongan/{id}/lamar', [KandidatController::class, 'apply'])->name('lowongan.apply');
+        Route::post('/lowongan/{id}/bookmark', [KandidatController::class, 'toggleBookmark'])->name('lowongan.bookmark');
+        Route::post('/lamaran/{id}/batal', [KandidatController::class, 'cancelApplication'])->name('lamaran.cancel');
+        Route::post('/lamaran/{id}/terima-tawaran', [KandidatController::class, 'acceptOffer'])->name('lamaran.acceptOffer');
+        Route::post('/lamaran/{id}/tolak-tawaran', [KandidatController::class, 'rejectOffer'])->name('lamaran.rejectOffer');
+    });
 });
 
 // ─── General User / Candidate Auth (Guest) ────────────────────────────────────

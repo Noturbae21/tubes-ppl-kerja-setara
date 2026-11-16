@@ -284,16 +284,28 @@
                                     </div>
 
                                     <!-- Bookmark Button Form -->
-                                    <form action="{{ route('kandidat.lowongan.bookmark', $job->id) }}" method="POST">
-                                        @csrf
-                                        <button type="submit"
-                                                class="w-9 h-9 rounded-xl flex items-center justify-center transition-colors focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:outline-none {{ $isSaved ? 'bg-rose-50 text-rose-600 hover:bg-rose-100' : 'bg-slate-50 text-slate-400 hover:bg-slate-100 hover:text-slate-600' }}"
-                                                aria-label="{{ $isSaved ? 'Hapus bookmark lowongan ' . $job->title : 'Simpan lowongan ' . $job->title }}">
-                                            <svg class="w-5 h-5 {{ $isSaved ? 'fill-current' : 'stroke-current fill-none' }}" viewBox="0 0 24 24" stroke-width="2">
+                                    @auth
+                                        <form action="{{ route('kandidat.lowongan.bookmark', $job->id) }}" method="POST">
+                                            @csrf
+                                            <button type="submit"
+                                                    class="w-9 h-9 rounded-xl flex items-center justify-center transition-colors focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:outline-none {{ $isSaved ? 'bg-rose-50 text-rose-600 hover:bg-rose-100' : 'bg-slate-50 text-slate-400 hover:bg-slate-100 hover:text-slate-600' }}"
+                                                    aria-label="{{ $isSaved ? 'Hapus bookmark lowongan ' . $job->title : 'Simpan lowongan ' . $job->title }}"
+                                                    title="{{ $isSaved ? 'Hapus bookmark' : 'Simpan lowongan' }}">
+                                                <svg class="w-5 h-5 {{ $isSaved ? 'fill-current' : 'stroke-current fill-none' }}" viewBox="0 0 24 24" stroke-width="2">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                                                </svg>
+                                            </button>
+                                        </form>
+                                    @else
+                                        <a href="{{ route('login') }}"
+                                           class="w-9 h-9 rounded-xl flex items-center justify-center transition-colors focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:outline-none bg-slate-50 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+                                           aria-label="Masuk untuk menyimpan lowongan {{ $job->title }}"
+                                           title="Masuk untuk menyimpan lowongan">
+                                            <svg class="w-5 h-5 stroke-current fill-none" viewBox="0 0 24 24" stroke-width="2">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
                                             </svg>
-                                        </button>
-                                    </form>
+                                        </a>
+                                    @endauth
                                 </div>
                             </div>
 

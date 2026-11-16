@@ -70,7 +70,7 @@ class MultiRoleLoginTest extends TestCase
         ]);
 
         $this->assertAuthenticatedAs($this->candidateUser);
-        $response->assertRedirect(route('dashboard'));
+        $response->assertRedirect(route('kandidat.home'));
     }
 
     public function test_hrd_can_login_via_hrd_role(): void

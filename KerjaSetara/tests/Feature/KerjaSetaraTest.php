@@ -51,7 +51,7 @@ class KerjaSetaraTest extends TestCase
             'password' => 'password',
         ]);
 
-        $response->assertRedirect('/dashboard');
+        $response->assertRedirect(route('kandidat.home'));
         $this->assertAuthenticated();
     }
 

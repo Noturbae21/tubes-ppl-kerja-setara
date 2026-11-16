@@ -81,36 +81,57 @@
                 <div class="flex items-center gap-3 lg:flex-col lg:items-end flex-shrink-0">
                     <div class="flex items-center gap-2 w-full lg:w-auto">
                         <!-- Bookmark Toggle Button Form -->
-                        <form action="{{ route('kandidat.lowongan.bookmark', $vacancy->id) }}" method="POST">
-                            @csrf
-                            <button type="submit"
-                                    class="p-3.5 rounded-2xl border transition-all focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:outline-none {{ $isSaved ? 'bg-rose-50 text-rose-600 border-rose-200 hover:bg-rose-100' : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50 hover:text-slate-700' }}"
-                                    title="{{ $isSaved ? 'Hapus bookmark lowongan' : 'Simpan lowongan ke bookmark' }}"
-                                    aria-label="{{ $isSaved ? 'Hapus bookmark' : 'Simpan lowongan' }}">
-                                <svg class="w-5 h-5 {{ $isSaved ? 'fill-current' : 'stroke-current fill-none' }}" viewBox="0 0 24 24" stroke-width="2">
+                        @auth
+                            <form action="{{ route('kandidat.lowongan.bookmark', $vacancy->id) }}" method="POST">
+                                @csrf
+                                <button type="submit"
+                                        class="p-3.5 rounded-2xl border transition-all focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:outline-none {{ $isSaved ? 'bg-rose-50 text-rose-600 border-rose-200 hover:bg-rose-100' : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50 hover:text-slate-700' }}"
+                                        title="{{ $isSaved ? 'Hapus bookmark lowongan' : 'Simpan lowongan ke bookmark' }}"
+                                        aria-label="{{ $isSaved ? 'Hapus bookmark' : 'Simpan lowongan' }}">
+                                    <svg class="w-5 h-5 {{ $isSaved ? 'fill-current' : 'stroke-current fill-none' }}" viewBox="0 0 24 24" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                                    </svg>
+                                </button>
+                            </form>
+                        @else
+                            <a href="{{ route('login') }}"
+                               class="p-3.5 rounded-2xl border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 hover:text-slate-700 transition-all focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:outline-none"
+                               title="Masuk untuk menyimpan lowongan"
+                               aria-label="Masuk untuk menyimpan lowongan">
+                                <svg class="w-5 h-5 stroke-current fill-none" viewBox="0 0 24 24" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
                                 </svg>
-                            </button>
-                        </form>
+                            </a>
+                        @endauth
 
                         <!-- Primary CTA "Lamar Pekerjaan Sekarang" Button -->
-                        @if($hasApplied)
-                            <div class="flex-1 lg:flex-initial px-5 py-3.5 rounded-2xl bg-emerald-50 text-emerald-800 border border-emerald-300 font-bold text-sm flex items-center justify-center gap-2">
-                                <svg class="w-5 h-5 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                                </svg>
-                                <span>Lamaran Sudah Terkirim</span>
-                            </div>
+                        @auth
+                            @if($hasApplied)
+                                <div class="flex-1 lg:flex-initial px-5 py-3.5 rounded-2xl bg-emerald-50 text-emerald-800 border border-emerald-300 font-bold text-sm flex items-center justify-center gap-2">
+                                    <svg class="w-5 h-5 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                    </svg>
+                                    <span>Lamaran Sudah Terkirim</span>
+                                </div>
+                            @else
+                                <button type="button"
+                                        @click="applyModalOpen = true"
+                                        class="flex-1 lg:flex-initial px-7 py-3.5 bg-blue-900 hover:bg-blue-800 active:bg-blue-950 text-white font-extrabold text-sm rounded-2xl shadow-lg transition-all flex items-center justify-center gap-2.5 focus-visible:ring-3 focus-visible:ring-blue-500 focus-visible:outline-none">
+                                    <span>Lamar Pekerjaan Sekarang</span>
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                    </svg>
+                                </button>
+                            @endif
                         @else
-                            <button type="button"
-                                    @click="applyModalOpen = true"
-                                    class="flex-1 lg:flex-initial px-7 py-3.5 bg-blue-900 hover:bg-blue-800 active:bg-blue-950 text-white font-extrabold text-sm rounded-2xl shadow-lg transition-all flex items-center justify-center gap-2.5 focus-visible:ring-3 focus-visible:ring-blue-500 focus-visible:outline-none">
-                                <span>Lamar Pekerjaan Sekarang</span>
+                            <a href="{{ route('login') }}"
+                               class="flex-1 lg:flex-initial px-7 py-3.5 bg-blue-900 hover:bg-blue-800 active:bg-blue-950 text-white font-extrabold text-sm rounded-2xl shadow-lg transition-all flex items-center justify-center gap-2.5 focus-visible:ring-3 focus-visible:ring-blue-500 focus-visible:outline-none">
+                                <span>Masuk untuk Melamar</span>
                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
                                 </svg>
-                            </button>
-                        @endif
+                            </a>
+                        @endauth
                     </div>
 
                     <span class="text-xs text-slate-400 font-medium hidden lg:block">
@@ -393,20 +414,30 @@
 
                         <!-- CTA button inside Matching Card -->
                         <div class="mt-6 pt-4 border-t border-slate-100">
-                            @if($hasApplied)
-                                <div class="w-full py-3 bg-emerald-50 text-emerald-800 font-bold text-xs rounded-xl border border-emerald-200 text-center">
-                                    Lamaran Sudah Terkirim
-                                </div>
+                            @auth
+                                @if($hasApplied)
+                                    <div class="w-full py-3 bg-emerald-50 text-emerald-800 font-bold text-xs rounded-xl border border-emerald-200 text-center">
+                                        Lamaran Sudah Terkirim
+                                    </div>
+                                @else
+                                    <button type="button"
+                                            @click="applyModalOpen = true"
+                                            class="w-full py-3.5 bg-blue-900 hover:bg-blue-800 text-white font-extrabold text-sm rounded-xl shadow-md transition-all flex items-center justify-center gap-2 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:outline-none">
+                                        <span>Lamar Pekerjaan Ini</span>
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                        </svg>
+                                    </button>
+                                @endif
                             @else
-                                <button type="button"
-                                        @click="applyModalOpen = true"
-                                        class="w-full py-3.5 bg-blue-900 hover:bg-blue-800 text-white font-extrabold text-sm rounded-xl shadow-md transition-all flex items-center justify-center gap-2 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:outline-none">
-                                    <span>Lamar Pekerjaan Ini</span>
+                                <a href="{{ route('login') }}"
+                                   class="w-full py-3.5 bg-blue-900 hover:bg-blue-800 text-white font-extrabold text-sm rounded-xl shadow-md transition-all flex items-center justify-center gap-2 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:outline-none text-center">
+                                    <span>Masuk untuk Melamar</span>
                                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
                                     </svg>
-                                </button>
-                            @endif
+                                </a>
+                            @endauth
                         </div>
 
                     </div>

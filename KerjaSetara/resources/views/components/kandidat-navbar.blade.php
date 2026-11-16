@@ -65,6 +65,7 @@
                     <span>Standar WCAG 2.1 AA</span>
                 </a>
 
+                @auth
                 <!-- Notification Dropdown -->
                 <div class="relative" @click.outside="notifOpen = false">
                     <button @click="notifOpen = !notifOpen; profileOpen = false"
@@ -132,6 +133,7 @@
                         </div>
                     </div>
                 </div>
+                @endauth
 
                 <!-- User Profile Dropdown -->
                 @auth

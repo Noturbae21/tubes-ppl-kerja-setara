@@ -546,19 +546,23 @@ class JobVacancy extends Model
     /**
      * Exact MatchingEngine score percentage: (Matched Facilities / Total User Preferences) * 100.
      */
-    public function calculateMatchScore(?User $user = null): int
+    public function calculateMatchScore(?User $user = null, ?string $category = null): int
     {
         $user = $user ?? Auth::user();
-        if (! $user) {
-            $user = User::where('email', 'nadia@kerjasetara.id')->orWhere('role', 'kandidat')->first();
-        }
 
-        $preference = $user?->accessibilityPreference;
+        if ($user) {
+            $preference = $user->accessibilityPreference;
 
-        if ($preference) {
-            $userPreferences = $preference->getActivePreferencesWithMetadata();
+            if ($preference) {
+                $userPreferences = $preference->getActivePreferencesWithMetadata();
+            } else {
+                $cat = $user->accessibility_category ?? 'fisik';
+                $dummy = new UserAccessibilityPreference(['category' => $cat]);
+                $userPreferences = $dummy->getActivePreferencesWithMetadata();
+            }
         } else {
-            $cat = $user?->accessibility_category ?? 'fisik';
+            // For Guest users, calibrate using the selected filter category or job category
+            $cat = $category ?: ($this->category ?: 'fisik');
             $dummy = new UserAccessibilityPreference(['category' => $cat]);
             $userPreferences = $dummy->getActivePreferencesWithMetadata();
         }
