@@ -154,7 +154,7 @@ class User extends Authenticatable
         return $this->companyProfile ?? CompanyProfile::firstOrCreate(
             ['user_id' => $this->id],
             [
-                'company_name' => $this->name ? (str_starts_with($this->name, 'PT ') ? $this->name : 'PT ' . $this->name) : 'PT Solusi Inklusif Indonesia',
+                'company_name' => $this->name ? (str_starts_with($this->name, 'PT ') ? $this->name : 'PT '.$this->name) : 'PT Solusi Inklusif Indonesia',
                 'industry' => 'Teknologi Informasi & Konsultan',
                 'location' => $this->city ?? 'Jakarta Selatan',
                 'description' => 'Profil perusahaan inklusif untuk rekrutmen talenta disabilitas.',

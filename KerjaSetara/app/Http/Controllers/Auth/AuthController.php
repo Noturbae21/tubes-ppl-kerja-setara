@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\ActivityLog;
 use App\Models\User;
 use App\Models\UserAccessibilityPreference;
 use Illuminate\Http\Request;
@@ -56,7 +57,7 @@ class AuthController extends Controller
                 ->with('success', 'Akun perusahaan berhasil dibuat! Selamat datang di Portal HRD KerjaSetara, '.$user->name.'.');
         }
 
-        return redirect()->route('dashboard')
+        return redirect()->route('kandidat.home')
             ->with('success', 'Akun berhasil dibuat! Selamat datang di KerjaSetara, '.$user->name.'.');
     }
 
@@ -100,7 +101,7 @@ class AuthController extends Controller
             'must_change_password' => false,
         ]);
 
-        \App\Models\ActivityLog::log(
+        ActivityLog::log(
             'update',
             "Pengguna {$user->name} memperbarui kata sandi pertama kali (alur kata sandi sementara)",
             ['target_type' => 'user', 'target_id' => $user->id]

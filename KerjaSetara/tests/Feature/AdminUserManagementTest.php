@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Models\ActivityLog;
 use App\Models\CompanyProfile;
 use App\Models\JobApplication;
 use App\Models\JobVacancy;
@@ -17,22 +16,28 @@ class AdminUserManagementTest extends TestCase
     use RefreshDatabase;
 
     private User $admin;
+
     private User $kandidat;
+
     private User $hrd;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->admin = User::factory()->create([
-            'name' => 'Fakhri Izzul Haq',
+        $this->admin = User::where('email', 'admin@kerjasetara.id')->first() ?? User::factory()->create([
             'email' => 'admin@kerjasetara.id',
             'role' => 'admin',
+        ]);
+        $this->admin->update([
+            'name' => 'Fakhri Izzul Haq',
             'status' => 'active',
             'password' => Hash::make('password'),
         ]);
 
-        $this->kandidat = User::factory()->create([
+        User::whereIn('email', ['budi.santoso@example.com', 'hrd@nusadigital.test'])->delete();
+
+        $this->kandidat = User::where('email', 'nadia.saraswati@example.com')->first() ?? User::factory()->create([
             'name' => 'Nadia Saraswati',
             'email' => 'nadia.saraswati@example.com',
             'role' => 'kandidat',
@@ -40,7 +45,7 @@ class AdminUserManagementTest extends TestCase
             'password' => Hash::make('password'),
         ]);
 
-        $this->hrd = User::factory()->create([
+        $this->hrd = User::where('email', 'hrd@teknologi-inovasi.test')->first() ?? User::factory()->create([
             'name' => 'PT Teknologi Inovasi',
             'email' => 'hrd@teknologi-inovasi.test',
             'role' => 'hrd',
@@ -48,7 +53,7 @@ class AdminUserManagementTest extends TestCase
             'password' => Hash::make('password'),
         ]);
 
-        CompanyProfile::create([
+        $company = CompanyProfile::where('user_id', $this->hrd->id)->first() ?? CompanyProfile::create([
             'user_id' => $this->hrd->id,
             'company_name' => 'PT Teknologi Inovasi',
             'industry' => 'Teknologi Informasi',

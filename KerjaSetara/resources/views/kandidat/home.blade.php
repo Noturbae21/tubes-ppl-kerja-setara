@@ -7,38 +7,40 @@
 <div class="bg-slate-50 min-h-screen">
 
     <!-- ─── 1. HERO SECTION & PENCARIAN ────────────────────────────────────── -->
-    <section class="relative bg-gradient-to-b from-blue-900 via-blue-900 to-indigo-950 text-white pt-12 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden"
+    <!-- Figma Linear Gradient: 0% #EFF6FF -> 100% #DBEAFE -->
+    <section class="relative bg-gradient-to-b from-[#EFF6FF] to-[#DBEAFE] text-slate-900 pt-12 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden border-b border-[#DBEAFE]"
+             style="background: linear-gradient(180deg, #EFF6FF 0%, #DBEAFE 100%);"
              aria-labelledby="hero-heading">
-        <!-- Subtle background shapes for modern aesthetic -->
-        <div class="absolute inset-0 opacity-10 pointer-events-none">
-            <div class="absolute top-0 right-1/4 w-96 h-96 bg-blue-400 rounded-full blur-3xl"></div>
-            <div class="absolute bottom-0 left-1/4 w-96 h-96 bg-indigo-400 rounded-full blur-3xl"></div>
+        <!-- Subtle background shapes -->
+        <div class="absolute inset-0 opacity-20 pointer-events-none">
+            <div class="absolute top-0 right-1/4 w-96 h-96 bg-blue-200 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-0 left-1/4 w-96 h-96 bg-indigo-200 rounded-full blur-3xl"></div>
         </div>
 
         <div class="relative max-w-5xl mx-auto text-center">
             <!-- Accessibility Badge Pill -->
-            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-800/80 border border-blue-400/30 text-blue-200 text-xs sm:text-sm font-semibold mb-6 shadow-xs">
-                <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/80 border border-blue-200/70 text-[#193a7c] text-xs sm:text-sm font-semibold mb-6 shadow-xs">
+                <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                 <span>Bursa Kerja Inklusif Bersertifikasi WCAG 2.1 Level AA</span>
             </div>
 
             <!-- Welcoming Headline -->
-            <h1 id="hero-heading" class="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-white leading-tight mb-4">
+            <h1 id="hero-heading" class="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-[#193a7c] leading-tight mb-4">
                 @auth
-                    Halo, <span class="text-blue-300">{{ auth()->user()->name }}</span>! 👋<br>
+                    Halo, <span class="text-blue-600">{{ auth()->user()->name }}</span>! 👋<br>
                     Temukan Karir Impian Tanpa Hambatan
                 @else
                     Peluang Karir Setara & Inklusif<br>
-                    <span class="text-blue-300">Untuk Setiap Potensi Terbaik Anda</span>
+                    <span class="text-blue-600">Untuk Setiap Potensi Terbaik Anda</span>
                 @endauth
             </h1>
 
-            <p class="text-base sm:text-lg text-blue-150 max-w-2xl mx-auto mb-8 font-normal leading-relaxed text-blue-100">
+            <p class="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto mb-8 font-normal leading-relaxed">
                 Terhubung dengan puluhan perusahaan terkemuka di Indonesia yang telah terverifikasi menyediakan fasilitas aksesibilitas ramah disabilitas.
             </p>
 
             <!-- Search Form Card -->
-            <div class="bg-white rounded-3xl p-3 sm:p-4 shadow-2xl border border-slate-100 text-slate-800 text-left max-w-4xl mx-auto">
+            <div class="bg-white rounded-3xl p-3 sm:p-4 shadow-xl border border-slate-200/80 text-slate-800 text-left max-w-4xl mx-auto">
                 <form action="{{ route('kandidat.home') }}" method="GET" class="flex flex-col md:flex-row items-stretch gap-2.5">
                     
                     <!-- Keyword Input -->
@@ -93,7 +95,7 @@
 
                     <!-- Submit Search Button -->
                     <button type="submit"
-                            class="w-full md:w-auto px-7 py-3 bg-blue-900 hover:bg-blue-800 active:bg-blue-950 text-white font-bold text-sm rounded-2xl shadow-md transition-all flex items-center justify-center gap-2 focus-visible:ring-3 focus-visible:ring-blue-500 focus-visible:outline-none flex-shrink-0">
+                            class="w-full md:w-auto px-7 py-3 bg-[#193a7c] hover:bg-[#132c5e] text-white font-bold text-sm rounded-2xl shadow-md transition-all flex items-center justify-center gap-2 focus-visible:ring-3 focus-visible:ring-blue-500 focus-visible:outline-none flex-shrink-0">
                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
@@ -105,15 +107,15 @@
             <!-- Quick Accessibility Facility Filters Bar -->
             <div class="mt-8 text-left max-w-4xl mx-auto" role="region" aria-label="Filter Cepat Aksesibilitas">
                 <div class="flex items-center justify-between mb-3">
-                    <span class="text-xs uppercase font-bold tracking-wider text-blue-200 flex items-center gap-1.5">
-                        <svg class="w-4 h-4 text-blue-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <span class="text-xs uppercase font-bold tracking-wider text-[#193a7c] flex items-center gap-1.5">
+                        <svg class="w-4 h-4 text-blue-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
                         </svg>
                         Filter Cepat Fasilitas Aksesibilitas:
                     </span>
                     @if($category || $tag || $search || $location)
                         <a href="{{ route('kandidat.home') }}" 
-                           class="text-xs text-blue-200 hover:text-white underline underline-offset-2 font-medium">
+                           class="text-xs text-blue-700 hover:text-blue-900 underline underline-offset-2 font-medium">
                             Reset Semua Filter ✕
                         </a>
                     @endif
@@ -135,7 +137,7 @@
                                 'tag' => $preset['tag'] ?? null,
                                 'page' => 1
                            ])) }}"
-                           class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all border focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:outline-none {{ $isActive ? 'bg-white text-blue-900 border-white shadow-md font-bold' : 'bg-blue-800/60 text-blue-100 hover:bg-blue-800 border-blue-700/60 hover:text-white' }}"
+                           class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all border focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:outline-none {{ $isActive ? 'bg-[#fffbeb] text-amber-950 border-[#fde68a] shadow-xs font-bold' : 'bg-white text-slate-700 hover:bg-slate-50 border-slate-200/90 shadow-2xs hover:text-slate-900' }}"
                            aria-pressed="{{ $isActive ? 'true' : 'false' }}">
                             
                             <!-- Icon -->
@@ -154,7 +156,7 @@
                             <span>{{ $preset['label'] }}</span>
 
                             <!-- Dynamic Count Badge -->
-                            <span class="px-1.5 py-0.5 rounded-full text-[10px] font-bold {{ $isActive ? 'bg-blue-100 text-blue-900' : 'bg-blue-900/80 text-blue-200' }}">
+                            <span class="px-1.5 py-0.5 rounded-full text-[10px] font-bold {{ $isActive ? 'bg-amber-100 text-amber-950' : 'bg-slate-100 text-slate-600' }}">
                                 {{ $count }}
                             </span>
                         </a>
@@ -179,24 +181,49 @@
                 </p>
             </div>
 
-            <!-- Job Type Quick Selector Pills -->
-            <div class="flex items-center gap-1.5 bg-white p-1 rounded-xl border border-slate-200 self-start sm:self-auto shadow-2xs">
-                <a href="{{ route('kandidat.home', array_merge(request()->query(), ['job_type' => null, 'page' => 1])) }}"
-                   class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors {{ empty($jobType) ? 'bg-blue-900 text-white shadow-2xs' : 'text-slate-600 hover:text-slate-900' }}">
-                    Semua Tipe
-                </a>
-                <a href="{{ route('kandidat.home', array_merge(request()->query(), ['job_type' => 'hybrid', 'page' => 1])) }}"
-                   class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors {{ $jobType === 'hybrid' ? 'bg-blue-900 text-white shadow-2xs' : 'text-slate-600 hover:text-slate-900' }}">
-                    Hybrid
-                </a>
-                <a href="{{ route('kandidat.home', array_merge(request()->query(), ['job_type' => 'remote', 'page' => 1])) }}"
-                   class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors {{ $jobType === 'remote' ? 'bg-blue-900 text-white shadow-2xs' : 'text-slate-600 hover:text-slate-900' }}">
-                    Remote / WFH
-                </a>
-                <a href="{{ route('kandidat.home', array_merge(request()->query(), ['job_type' => 'full-time', 'page' => 1])) }}"
-                   class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors {{ $jobType === 'full-time' ? 'bg-blue-900 text-white shadow-2xs' : 'text-slate-600 hover:text-slate-900' }}">
-                    Penuh Waktu
-                </a>
+            <!-- Controls: Sort & Job Type Pills -->
+            <div class="flex flex-wrap items-center gap-3 self-start sm:self-auto">
+                <!-- Sort Dropdown -->
+                <div class="flex items-center gap-1.5 bg-white px-2.5 py-1 rounded-xl border border-slate-200 shadow-2xs">
+                    <span class="text-xs font-semibold text-slate-400">Urutkan:</span>
+                    <form action="{{ route('kandidat.home') }}" method="GET" id="sort-form" class="inline">
+                        @foreach(request()->except('sort', 'page') as $key => $val)
+                            @if(is_array($val))
+                                @foreach($val as $item)
+                                    <input type="hidden" name="{{ $key }}[]" value="{{ $item }}">
+                                @endforeach
+                            @elseif(!empty($val))
+                                <input type="hidden" name="{{ $key }}" value="{{ $val }}">
+                            @endif
+                        @endforeach
+                        <select name="sort" id="sort-selector" onchange="document.getElementById('sort-form').submit()"
+                                class="text-xs font-bold text-blue-900 bg-transparent border-0 focus:ring-0 focus:outline-none cursor-pointer pr-1">
+                            <option value="match" {{ ($sort ?? 'match') === 'match' ? 'selected' : '' }}>🎯 Kecocokan Tertinggi</option>
+                            <option value="latest" {{ ($sort ?? '') === 'latest' ? 'selected' : '' }}>🕒 Terbaru</option>
+                            <option value="salary" {{ ($sort ?? '') === 'salary' ? 'selected' : '' }}>💰 Gaji Tertinggi</option>
+                        </select>
+                    </form>
+                </div>
+
+                <!-- Job Type Quick Selector Pills -->
+                <div class="flex items-center gap-1.5 bg-white p-1 rounded-xl border border-slate-200 shadow-2xs">
+                    <a href="{{ route('kandidat.home', array_merge(request()->query(), ['job_type' => null, 'page' => 1])) }}"
+                       class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors {{ empty($jobType) ? 'bg-blue-900 text-white shadow-2xs' : 'text-slate-600 hover:text-slate-900' }}">
+                        Semua Tipe
+                    </a>
+                    <a href="{{ route('kandidat.home', array_merge(request()->query(), ['job_type' => 'hybrid', 'page' => 1])) }}"
+                       class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors {{ $jobType === 'hybrid' ? 'bg-blue-900 text-white shadow-2xs' : 'text-slate-600 hover:text-slate-900' }}">
+                        Hybrid
+                    </a>
+                    <a href="{{ route('kandidat.home', array_merge(request()->query(), ['job_type' => 'remote', 'page' => 1])) }}"
+                       class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors {{ $jobType === 'remote' ? 'bg-blue-900 text-white shadow-2xs' : 'text-slate-600 hover:text-slate-900' }}">
+                        Remote / WFH
+                    </a>
+                    <a href="{{ route('kandidat.home', array_merge(request()->query(), ['job_type' => 'full-time', 'page' => 1])) }}"
+                       class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors {{ $jobType === 'full-time' ? 'bg-blue-900 text-white shadow-2xs' : 'text-slate-600 hover:text-slate-900' }}">
+                        Penuh Waktu
+                    </a>
+                </div>
             </div>
         </div>
 
@@ -208,6 +235,16 @@
                         $isSaved = in_array($job->id, $savedJobIds);
                         $hasApplied = in_array($job->id, $appliedJobIds);
                         $facilities = $job->facility_details;
+                        $score = $job->match_score ?? $job->calculateMatchScore();
+                        if ($score >= 90) {
+                            $badgeStyle = 'bg-emerald-50 text-emerald-800 border-emerald-200 ring-1 ring-emerald-300/60';
+                        } elseif ($score >= 70) {
+                            $badgeStyle = 'bg-blue-50 text-blue-800 border-blue-200 ring-1 ring-blue-300/60';
+                        } elseif ($score > 0) {
+                            $badgeStyle = 'bg-amber-50 text-amber-800 border-amber-200 ring-1 ring-amber-300/60';
+                        } else {
+                            $badgeStyle = 'bg-slate-50 text-slate-600 border-slate-200';
+                        }
                     @endphp
                     
                     <article class="bg-white rounded-3xl border border-slate-200 shadow-sm hover:shadow-xl hover:border-blue-300 transition-all duration-300 flex flex-col justify-between overflow-hidden group focus-within:ring-2 focus-within:ring-blue-600"
@@ -236,17 +273,28 @@
                                     </div>
                                 </div>
 
-                                <!-- Bookmark Button Form -->
-                                <form action="{{ route('kandidat.lowongan.bookmark', $job->id) }}" method="POST">
-                                    @csrf
-                                    <button type="submit"
-                                            class="w-9 h-9 rounded-xl flex items-center justify-center transition-colors focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:outline-none {{ $isSaved ? 'bg-rose-50 text-rose-600 hover:bg-rose-100' : 'bg-slate-50 text-slate-400 hover:bg-slate-100 hover:text-slate-600' }}"
-                                            aria-label="{{ $isSaved ? 'Hapus bookmark lowongan ' . $job->title : 'Simpan lowongan ' . $job->title }}">
-                                        <svg class="w-5 h-5 {{ $isSaved ? 'fill-current' : 'stroke-current fill-none' }}" viewBox="0 0 24 24" stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                                <div class="flex items-center gap-2">
+                                    <!-- MatchingEngine Score Badge -->
+                                    <div class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-black border shadow-2xs {{ $badgeStyle }}"
+                                         title="Kesesuaian dengan kebutuhan aksesibilitas profil Anda: {{ $score }}%">
+                                        <svg class="w-3.5 h-3.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                                         </svg>
-                                    </button>
-                                </form>
+                                        <span>{{ $score }}% Cocok</span>
+                                    </div>
+
+                                    <!-- Bookmark Button Form -->
+                                    <form action="{{ route('kandidat.lowongan.bookmark', $job->id) }}" method="POST">
+                                        @csrf
+                                        <button type="submit"
+                                                class="w-9 h-9 rounded-xl flex items-center justify-center transition-colors focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:outline-none {{ $isSaved ? 'bg-rose-50 text-rose-600 hover:bg-rose-100' : 'bg-slate-50 text-slate-400 hover:bg-slate-100 hover:text-slate-600' }}"
+                                                aria-label="{{ $isSaved ? 'Hapus bookmark lowongan ' . $job->title : 'Simpan lowongan ' . $job->title }}">
+                                            <svg class="w-5 h-5 {{ $isSaved ? 'fill-current' : 'stroke-current fill-none' }}" viewBox="0 0 24 24" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                                            </svg>
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
 
                             <!-- Position Title -->
@@ -414,20 +462,21 @@
             </div>
 
             <!-- Call to Action Banner for Candidate Profile -->
-            <div class="mt-14 bg-gradient-to-r from-blue-900 to-indigo-900 rounded-3xl p-8 sm:p-10 text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
+            <div class="mt-14 rounded-3xl p-8 sm:p-10 text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl bg-[#193a7c]"
+                 style="background: linear-gradient(135deg, #193a7c 0%, #1e40af 100%); background-color: #193a7c;">
                 <div class="max-w-xl">
-                    <span class="text-xs font-bold text-blue-300 uppercase tracking-wider block mb-1">Fitur Unggulan KerjaSetara</span>
-                    <h3 class="text-xl sm:text-2xl font-black mb-2">
+                    <span class="text-xs font-bold text-blue-200 uppercase tracking-wider block mb-1">Fitur Unggulan KerjaSetara</span>
+                    <h3 class="text-xl sm:text-2xl font-black mb-2 text-white">
                         Ingin Tahu Tingkat Kecocokan Aksesibilitas Anda?
                     </h3>
-                    <p class="text-blue-150 text-sm leading-relaxed text-blue-100">
-                        Buka halaman detail lowongan untuk melihat perhitungan otomatis <em>Matching Engine</em> yang memetakan fasilitas perusahaan terhadap kebutuhan akomodasi Anda.
+                    <p class="text-sm leading-relaxed text-blue-100">
+                        Buka halaman detail lowongan untuk melihat perhitungan otomatis <em class="font-semibold text-white">Matching Engine</em> yang memetakan fasilitas perusahaan terhadap kebutuhan akomodasi Anda.
                     </p>
                 </div>
                 <a href="#hero-heading"
-                   class="px-6 py-3 bg-white text-blue-900 hover:bg-blue-50 font-bold text-sm rounded-xl shadow-md transition-all flex items-center gap-2 flex-shrink-0">
+                   class="px-6 py-3 bg-white text-[#193a7c] hover:bg-blue-50 font-bold text-sm rounded-xl shadow-md transition-all flex items-center gap-2 flex-shrink-0">
                     <span>Mulai Jelajahi Posisi</span>
-                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg class="w-4 h-4 text-[#193a7c]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
                     </svg>
                 </a>
