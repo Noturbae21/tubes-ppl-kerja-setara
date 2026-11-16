@@ -66,6 +66,110 @@ class ActivityLog extends Model
         ]);
     }
 
+    // ─── Accessors & Helpers ──────────────────────────────────────────────
+
+    public function getFormattedDateAttribute(): string
+    {
+        $months = [
+            1 => 'Jan', 2 => 'Feb', 3 => 'Mar', 4 => 'Apr', 5 => 'Mei', 6 => 'Jun',
+            7 => 'Jul', 8 => 'Agu', 9 => 'Sep', 10 => 'Okt', 11 => 'Nov', 12 => 'Des',
+        ];
+
+        $date = ($this->created_at ?? now())->setTimezone('Asia/Jakarta');
+        $month = $months[$date->month] ?? $date->format('M');
+
+        return sprintf('%02d %s %d', $date->day, $month, $date->year);
+    }
+
+    public function getFormattedTimeAttribute(): string
+    {
+        $date = ($this->created_at ?? now())->setTimezone('Asia/Jakarta');
+
+        return $date->format('H.i.s').' WIB';
+    }
+
+    public function getActorIdentifierAttribute(): string
+    {
+        if ($this->user) {
+            return $this->user->identifier;
+        }
+
+        if ($this->metadata && isset($this->metadata['identifier'])) {
+            return (string) $this->metadata['identifier'];
+        }
+
+        if (in_array(strtolower((string) $this->user_role), ['sistem', 'system'], true)) {
+            return 'Layanan autentikasi';
+        }
+
+        return 'Sesi tidak terautentikasi';
+    }
+
+    public function getActorNameAttribute(): string
+    {
+        if ($this->user_name) {
+            return $this->user_name;
+        }
+
+        if ($this->user) {
+            return $this->user->name;
+        }
+
+        if (in_array(strtolower((string) $this->user_role), ['sistem', 'system'], true)) {
+            return 'Sistem';
+        }
+
+        return 'Aktor tidak dikenal';
+    }
+
+    public function getRoleLabelAttribute(): string
+    {
+        $role = strtolower((string) ($this->user_role ?? 'tamu'));
+
+        return match ($role) {
+            'admin' => 'Admin',
+            'hrd', 'company', 'perusahaan' => 'Perusahaan',
+            'kandidat', 'user' => 'Kandidat',
+            'sistem', 'system' => 'Sistem',
+            default => 'Tamu',
+        };
+    }
+
+    public function getActionLabelAttribute(): string
+    {
+        return match (strtolower($this->action_type)) {
+            'create' => 'Create',
+            'update' => 'Update',
+            'delete' => 'Delete',
+            'login' => 'Login berhasil',
+            'login_failed' => 'Login gagal',
+            'logout' => 'Logout',
+            'verify' => 'Verifikasi',
+            'reject' => 'Tolak',
+            'revision' => 'Minta Revisi',
+            'access_denied' => 'Akses ditolak',
+            'apply' => 'Create',
+            'block' => 'Blokir',
+            'activate' => 'Aktivasi',
+            default => ucfirst($this->action_type),
+        };
+    }
+
+    public function getResultLabelAttribute(): string
+    {
+        $result = strtolower((string) ($this->result ?? 'success'));
+
+        if (in_array($result, ['success', 'berhasil', 'ok'], true)) {
+            return 'Berhasil';
+        }
+
+        if (in_array($result, ['rejected', 'ditolak', 'denied'], true)) {
+            return 'Ditolak';
+        }
+
+        return 'Gagal';
+    }
+
     // ─── Scopes ───────────────────────────────────────────────────────────
 
     public function scopeDateRange($query, ?string $from, ?string $to)

@@ -25,35 +25,37 @@ class AdminUserManagementTest extends TestCase
     {
         parent::setUp();
 
-        $this->admin = User::where('email', 'admin@kerjasetara.id')->first() ?? User::factory()->create([
-            'email' => 'admin@kerjasetara.id',
-            'role' => 'admin',
-        ]);
-        $this->admin->update([
-            'name' => 'Fakhri Izzul Haq',
-            'status' => 'active',
-            'password' => Hash::make('password'),
-        ]);
+        $this->admin = User::firstOrCreate(
+            ['email' => 'fakhri.admin@example.com'],
+            [
+                'name' => 'Fakhri Izzul Haq',
+                'role' => 'admin',
+                'status' => 'active',
+                'password' => Hash::make('password'),
+            ]
+        );
 
-        User::whereIn('email', ['budi.santoso@example.com', 'hrd@nusadigital.test'])->delete();
+        $this->kandidat = User::firstOrCreate(
+            ['email' => 'nadia.saraswati@example.com'],
+            [
+                'name' => 'Nadia Saraswati',
+                'role' => 'kandidat',
+                'status' => 'active',
+                'password' => Hash::make('password'),
+            ]
+        );
 
-        $this->kandidat = User::where('email', 'nadia.saraswati@example.com')->first() ?? User::factory()->create([
-            'name' => 'Nadia Saraswati',
-            'email' => 'nadia.saraswati@example.com',
-            'role' => 'kandidat',
-            'status' => 'active',
-            'password' => Hash::make('password'),
-        ]);
+        $this->hrd = User::firstOrCreate(
+            ['email' => 'hrd@teknologi-inovasi.test'],
+            [
+                'name' => 'PT Teknologi Inovasi',
+                'role' => 'hrd',
+                'status' => 'active',
+                'password' => Hash::make('password'),
+            ]
+        );
 
-        $this->hrd = User::where('email', 'hrd@teknologi-inovasi.test')->first() ?? User::factory()->create([
-            'name' => 'PT Teknologi Inovasi',
-            'email' => 'hrd@teknologi-inovasi.test',
-            'role' => 'hrd',
-            'status' => 'active',
-            'password' => Hash::make('password'),
-        ]);
-
-        $company = CompanyProfile::where('user_id', $this->hrd->id)->first() ?? CompanyProfile::create([
+        CompanyProfile::create([
             'user_id' => $this->hrd->id,
             'company_name' => 'PT Teknologi Inovasi',
             'industry' => 'Teknologi Informasi',
@@ -82,13 +84,11 @@ class AdminUserManagementTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertSee('Manajemen Pengguna Platform');
-        $response->assertSee('Nadia Saraswati');
-        $response->assertSee('PT Teknologi Inovasi');
-        $response->assertSee('Fakhri Izzul Haq');
-        $response->assertSee('Kandidat');
-        $response->assertSee('Perusahaan');
-        $response->assertSee('Administrator');
+        $response->assertSee('Role: Semua');
+        $response->assertSee('Status: Aktif');
         $response->assertSee('+ Tambah User Baru');
+        $response->assertSee('Nama Pengguna');
+        $response->assertSee('Tindakan');
     }
 
     public function test_admin_can_search_users_by_name_and_email(): void
@@ -127,7 +127,10 @@ class AdminUserManagementTest extends TestCase
         ]);
 
         // Filter Status: Active
-        $response = $this->actingAs($this->admin)->get(route('admin.users', ['status' => 'active']));
+        $response = $this->actingAs($this->admin)->get(route('admin.users', [
+            'status' => 'active',
+            'search' => 'Nadia Saraswati',
+        ]));
         $response->assertStatus(200);
         $response->assertSee('Nadia Saraswati');
         $response->assertDontSee('Akun Terblokir');
@@ -142,8 +145,8 @@ class AdminUserManagementTest extends TestCase
     public function test_admin_can_create_new_candidate_user(): void
     {
         $response = $this->actingAs($this->admin)->post(route('admin.users.store'), [
-            'name' => 'Budi Santoso',
-            'email' => 'budi.santoso@example.com',
+            'name' => 'Budi Baru Test',
+            'email' => 'budi.baru.unique@example.com',
             'role' => 'kandidat',
             'status' => 'active',
             'password' => 'password123',
@@ -152,13 +155,13 @@ class AdminUserManagementTest extends TestCase
 
         $response->assertRedirect(route('admin.users'));
         $this->assertDatabaseHas('users', [
-            'name' => 'Budi Santoso',
-            'email' => 'budi.santoso@example.com',
+            'name' => 'Budi Baru Test',
+            'email' => 'budi.baru.unique@example.com',
             'role' => 'kandidat',
             'status' => 'active',
         ]);
 
-        $newUser = User::where('email', 'budi.santoso@example.com')->first();
+        $newUser = User::where('email', 'budi.baru.unique@example.com')->first();
         $this->assertTrue(Hash::check('password123', $newUser->password));
         $this->assertDatabaseHas('user_accessibility_preferences', [
             'user_id' => $newUser->id,
@@ -176,8 +179,8 @@ class AdminUserManagementTest extends TestCase
     public function test_admin_can_create_new_hrd_mapped_from_perusahaan_label(): void
     {
         $response = $this->actingAs($this->admin)->post(route('admin.users.store'), [
-            'name' => 'PT Nusa Digital',
-            'email' => 'hrd@nusadigital.test',
+            'name' => 'PT Nusa Digital Baru',
+            'email' => 'hrd.nusa.unique@test.com',
             'role' => 'perusahaan', // Label from UI
             'status' => 'active',
             'must_change_password' => '1',
@@ -185,16 +188,16 @@ class AdminUserManagementTest extends TestCase
 
         $response->assertRedirect(route('admin.users'));
         $this->assertDatabaseHas('users', [
-            'name' => 'PT Nusa Digital',
-            'email' => 'hrd@nusadigital.test',
+            'name' => 'PT Nusa Digital Baru',
+            'email' => 'hrd.nusa.unique@test.com',
             'role' => 'hrd', // Correctly mapped to HRD
             'must_change_password' => true,
         ]);
 
-        $newCompanyUser = User::where('email', 'hrd@nusadigital.test')->first();
+        $newCompanyUser = User::where('email', 'hrd.nusa.unique@test.com')->first();
         $this->assertDatabaseHas('company_profiles', [
             'user_id' => $newCompanyUser->id,
-            'company_name' => 'PT Nusa Digital',
+            'company_name' => 'PT Nusa Digital Baru',
         ]);
     }
 

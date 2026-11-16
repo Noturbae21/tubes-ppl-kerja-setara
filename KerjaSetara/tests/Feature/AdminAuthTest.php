@@ -97,8 +97,8 @@ class AdminAuthTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertSee('Manajemen Pengguna Platform');
-        $response->assertSee('Talenta / User');
-        $response->assertSee('Perusahaan / HRD');
+        $response->assertSee('Kandidat');
+        $response->assertSee('Perusahaan');
     }
 
     public function test_admin_can_access_vacancies_moderation(): void

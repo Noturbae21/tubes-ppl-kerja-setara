@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
 
 class User extends Authenticatable
 {
@@ -66,11 +67,21 @@ class User extends Authenticatable
         return sprintf('%s%03d', $prefix, $this->id);
     }
 
+    public function getFormattedJoinedDateAttribute(): string
+    {
+        $months = [
+            1 => 'Jan', 2 => 'Feb', 3 => 'Mar', 4 => 'Apr', 5 => 'Mei', 6 => 'Jun',
+            7 => 'Jul', 8 => 'Agu', 9 => 'Sep', 10 => 'Okt', 11 => 'Nov', 12 => 'Des',
+        ];
+
+        return sprintf('%02d %s %d', $this->created_at->day, $months[$this->created_at->month] ?? $this->created_at->format('M'), $this->created_at->year);
+    }
+
     public function getRoleLabelAttribute(): string
     {
         return match ($this->role) {
-            'admin' => 'Administrator',
-            'hrd', 'company' => 'Perusahaan / HRD',
+            'admin' => 'Admin',
+            'hrd', 'company' => 'Perusahaan',
             default => 'Kandidat',
         };
     }
@@ -78,6 +89,30 @@ class User extends Authenticatable
     public function getStatusLabelAttribute(): string
     {
         return $this->isBlocked() ? 'Diblokir' : 'Aktif';
+    }
+
+    public function getInitialsAttribute(): string
+    {
+        $name = trim($this->name ?? $this->full_name ?? 'Admin');
+        $words = preg_split('/\s+/', $name);
+        if (count($words) >= 2) {
+            return strtoupper(substr($words[0], 0, 1).substr($words[1], 0, 1));
+        }
+
+        return strtoupper(substr($name, 0, 2));
+    }
+
+    public function getAvatarUrlAttribute(): ?string
+    {
+        if (! $this->avatar) {
+            return null;
+        }
+
+        if (str_starts_with($this->avatar, 'http://') || str_starts_with($this->avatar, 'https://')) {
+            return $this->avatar;
+        }
+
+        return Storage::disk('public')->url($this->avatar);
     }
 
     public function accessibilityPreference(): HasOne

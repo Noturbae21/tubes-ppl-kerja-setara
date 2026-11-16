@@ -205,8 +205,8 @@ class UserSeeder extends Seeder
                 'role' => 'admin',
             ]
         );
-        // Mock Users from Platform Management Design Specification
-        User::firstOrCreate(
+        // Mock Users from Platform Management Design Specification (Exact Match to Figma Image)
+        $nadiaMock = User::firstOrCreate(
             ['email' => 'nadia.saraswati@example.com'],
             [
                 'name' => 'Nadia Saraswati',
@@ -214,23 +214,27 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('password'),
                 'role' => 'kandidat',
                 'status' => 'active',
+                'created_at' => '2026-10-25 10:00:00',
             ]
         );
+        $nadiaMock->update(['created_at' => '2026-10-25 10:00:00']);
 
         $ptTekno = User::firstOrCreate(
-            ['email' => 'kontak@teknologi-inovasi.test'],
+            ['email' => 'hr.teknologi@example.com'],
             [
-                'name' => 'PT Teknologi Inovasi',
-                'full_name' => 'PT Teknologi Inovasi',
+                'name' => 'PT Teknologi Inovatif',
+                'full_name' => 'PT Teknologi Inovatif',
                 'password' => Hash::make('password'),
                 'role' => 'hrd',
                 'status' => 'active',
+                'created_at' => '2026-10-24 10:00:00',
             ]
         );
+        $ptTekno->update(['name' => 'PT Teknologi Inovatif', 'created_at' => '2026-10-24 10:00:00']);
         CompanyProfile::firstOrCreate(
             ['user_id' => $ptTekno->id],
             [
-                'company_name' => 'PT Teknologi Inovasi',
+                'company_name' => 'PT Teknologi Inovatif',
                 'description' => 'Solusi teknologi inklusif masa depan.',
                 'industry' => 'Teknologi Informasi',
                 'location' => 'Jakarta Pusat',
@@ -239,7 +243,7 @@ class UserSeeder extends Seeder
             ]
         );
 
-        User::firstOrCreate(
+        $budiMock = User::firstOrCreate(
             ['email' => 'budi.demo@example.com'],
             [
                 'name' => 'Budi Santoso',
@@ -247,19 +251,23 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('password'),
                 'role' => 'kandidat',
                 'status' => 'active',
+                'created_at' => '2026-10-23 10:00:00',
             ]
         );
+        $budiMock->update(['created_at' => '2026-10-23 10:00:00']);
 
         $ptNusa = User::firstOrCreate(
-            ['email' => 'kontak@nusadigital.test'],
+            ['email' => 'hr.nusadigital@example.com'],
             [
                 'name' => 'PT Nusa Digital',
                 'full_name' => 'PT Nusa Digital',
                 'password' => Hash::make('password'),
                 'role' => 'hrd',
                 'status' => 'active',
+                'created_at' => '2026-10-22 10:00:00',
             ]
         );
+        $ptNusa->update(['created_at' => '2026-10-22 10:00:00']);
         CompanyProfile::firstOrCreate(
             ['user_id' => $ptNusa->id],
             [
@@ -272,7 +280,7 @@ class UserSeeder extends Seeder
             ]
         );
 
-        User::firstOrCreate(
+        $sitiMock = User::firstOrCreate(
             ['email' => 'siti.rahmawati@example.com'],
             [
                 'name' => 'Siti Rahmawati',
@@ -280,18 +288,22 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('password'),
                 'role' => 'kandidat',
                 'status' => 'active',
+                'created_at' => '2026-10-21 10:00:00',
             ]
         );
+        $sitiMock->update(['created_at' => '2026-10-21 10:00:00']);
 
-        User::firstOrCreate(
-            ['email' => 'fakhri@kerjasetara.id'],
+        $fakhriMock = User::firstOrCreate(
+            ['email' => 'fakhri.admin@example.com'],
             [
                 'name' => 'Fakhri Izzul Haq',
                 'full_name' => 'Fakhri Izzul Haq',
                 'password' => Hash::make('password'),
                 'role' => 'admin',
                 'status' => 'active',
+                'created_at' => '2026-10-01 10:00:00',
             ]
         );
+        $fakhriMock->update(['created_at' => '2026-10-01 10:00:00']);
     }
 }

@@ -51,19 +51,23 @@ class JobVacancySeeder extends Seeder
                 continue;
             }
 
-            JobVacancy::create([
-                'company_id' => $company->id,
-                'title' => $data['title'],
-                'description' => $data['desc'],
-                'location' => $data['location'],
-                'job_type' => $data['job_type'],
-                'category' => $data['category'],
-                'accessibility_tags' => $data['tags'],
-                'salary_min' => $data['salary_min'],
-                'salary_max' => $data['salary_max'],
-                'is_active' => true,
-                'deadline' => now()->addDays(rand(14, 60)),
-            ]);
+            JobVacancy::firstOrCreate(
+                [
+                    'company_id' => $company->id,
+                    'title' => $data['title'],
+                ],
+                [
+                    'description' => $data['desc'],
+                    'location' => $data['location'],
+                    'job_type' => $data['job_type'],
+                    'category' => $data['category'],
+                    'accessibility_tags' => $data['tags'],
+                    'salary_min' => $data['salary_min'],
+                    'salary_max' => $data['salary_max'],
+                    'is_active' => true,
+                    'deadline' => now()->addDays(rand(14, 60)),
+                ]
+            );
         }
     }
 }

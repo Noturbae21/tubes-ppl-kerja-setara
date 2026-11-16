@@ -67,7 +67,10 @@ class TestimonialSeeder extends Seeder
         ];
 
         foreach ($testimonials as $data) {
-            Testimonial::create(array_merge($data, ['is_active' => true]));
+            Testimonial::firstOrCreate(
+                ['name' => $data['name']],
+                array_merge($data, ['is_active' => true])
+            );
         }
     }
 }

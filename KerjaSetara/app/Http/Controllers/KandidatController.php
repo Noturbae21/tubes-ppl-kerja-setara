@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ActivityLog;
 use App\Models\CompanyProfile;
 use App\Models\JobApplication;
 use App\Models\JobVacancy;
@@ -229,7 +230,7 @@ class KandidatController extends Controller
             'consent_agreement.accepted' => 'Anda harus menyetujui pernyataan persetujuan pembagian data aksesibilitas.',
         ]);
 
-        JobApplication::create([
+        $application = JobApplication::create([
             'user_id' => $user->id,
             'job_vacancy_id' => $vacancy->id,
             'resume_name' => $validated['resume_name'],
@@ -238,6 +239,18 @@ class KandidatController extends Controller
             'consent_agreement' => true,
             'status' => 'pending',
         ]);
+
+        ActivityLog::log(
+            'create',
+            "Melamar posisi {$vacancy->title} di ".($vacancy->company->company_name ?? 'perusahaan mitra').'.',
+            [
+                'level' => 'info',
+                'result' => 'Berhasil',
+                'target_type' => 'job_application',
+                'target_id' => $application->id,
+                'user' => $user,
+            ]
+        );
 
         return redirect()->back()
             ->with('success', '🎉 Lamaran Anda berhasil terkirim! Tim rekrutmen '.($vacancy->company->company_name ?? 'perusahaan').' akan meninjau profil dan kebutuhan aksesibilitas Anda.');

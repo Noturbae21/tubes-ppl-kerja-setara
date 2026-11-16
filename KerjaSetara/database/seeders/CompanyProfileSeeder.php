@@ -145,25 +145,29 @@ class CompanyProfileSeeder extends Seeder
         ];
 
         foreach ($companies as $data) {
-            $user = User::create([
-                'name' => $data['name'],
-                'full_name' => $data['full_name'],
-                'email' => $data['email'],
-                'password' => Hash::make('password'),
-                'role' => 'hrd',
-            ]);
+            $user = User::firstOrCreate(
+                ['email' => $data['email']],
+                [
+                    'name' => $data['name'],
+                    'full_name' => $data['full_name'],
+                    'password' => Hash::make('password'),
+                    'role' => 'hrd',
+                ]
+            );
 
-            CompanyProfile::create([
-                'user_id' => $user->id,
-                'company_name' => $data['company_name'],
-                'industry' => $data['industry'],
-                'location' => $data['location'],
-                'description' => $data['description'],
-                'website' => $data['website'],
-                'employee_count' => $data['employee_count'],
-                'accessibility_features' => $data['accessibility_features'],
-                'is_inclusive_certified' => $data['is_inclusive_certified'],
-            ]);
+            CompanyProfile::updateOrCreate(
+                ['user_id' => $user->id],
+                [
+                    'company_name' => $data['company_name'],
+                    'industry' => $data['industry'],
+                    'location' => $data['location'],
+                    'description' => $data['description'],
+                    'website' => $data['website'],
+                    'employee_count' => $data['employee_count'],
+                    'accessibility_features' => $data['accessibility_features'],
+                    'is_inclusive_certified' => $data['is_inclusive_certified'],
+                ]
+            );
         }
     }
 }

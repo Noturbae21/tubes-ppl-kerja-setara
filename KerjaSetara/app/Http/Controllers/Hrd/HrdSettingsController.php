@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Hrd;
 
 use App\Http\Controllers\Controller;
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -122,8 +123,28 @@ class HrdSettingsController extends Controller
             $company->update(['npwp_file' => $fileName]);
         }
 
+        // If company was rejected or needed revision, reset to pending for Admin review
+        if ($company->needsRevision() || $company->isRejected()) {
+            $company->update([
+                'verification_status' => 'pending',
+                'verification_notes' => 'Dokumen diperbarui oleh HRD pada '.now()->translatedFormat('d M Y H:i'),
+            ]);
+        }
+
+        ActivityLog::log(
+            'update',
+            "Perusahaan {$company->company_name} ({$company->identifier}) memperbarui dokumen ".($docType === 'nib' ? 'NIB' : 'NPWP')." ({$fileName}).",
+            [
+                'level' => 'info',
+                'result' => 'Berhasil',
+                'target_type' => 'company',
+                'target_id' => $company->id,
+                'user' => $user,
+            ]
+        );
+
         return redirect()->route('hrd.pengaturan.index', ['tab' => 'dokumen'])
-            ->with('success', 'Dokumen legalitas berhasil diperbarui.');
+            ->with('success', 'Dokumen legalitas berhasil diperbarui dan diajukan untuk verifikasi.');
     }
 
     /**

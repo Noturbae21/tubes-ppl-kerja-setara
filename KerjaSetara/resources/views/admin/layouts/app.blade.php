@@ -79,9 +79,9 @@
                     </a>
 
                     <!-- 2. Verifikasi Perusahaan -->
-                    <a href="{{ route('admin.lowongan') }}"
-                       class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('admin.lowongan*') ? 'bg-blue-800 text-white shadow-md' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
-                        <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <a href="{{ route('admin.companies.verification') }}"
+                       class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('admin.companies*') ? 'bg-blue-800 text-white shadow-md' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                        <svg class="w-4 h-4 {{ request()->routeIs('admin.companies*') ? 'text-white' : 'text-slate-400' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
                         </svg>
                         <span>Verifikasi Perusahaan</span>
@@ -106,9 +106,9 @@
                     </a>
 
                     <!-- 5. Log Aktivitas -->
-                    <a href="{{ route('admin.users') }}?tab=logs"
-                       class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:bg-slate-800 hover:text-white transition-all">
-                        <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <a href="{{ route('admin.logs.index') }}"
+                       class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('admin.logs*') ? 'bg-blue-800 text-white shadow-md' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                        <svg class="w-4 h-4 {{ request()->routeIs('admin.logs*') ? 'text-white' : 'text-slate-400' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
                         </svg>
                         <span>Log Aktivitas</span>
@@ -206,18 +206,24 @@
                     </button>
 
                     <!-- Admin Profile Card -->
-                    <div class="flex items-center gap-2.5 pl-2 border-l border-slate-200">
-                        <div class="w-8 h-8 rounded-full bg-slate-200 text-slate-700 font-bold flex items-center justify-center text-xs">
-                            {{ substr(auth()->user()->name ?? 'FI', 0, 2) }}
-                        </div>
+                    <a href="{{ route('admin.profile') }}"
+                       title="Buka Profil Administrator"
+                       class="flex items-center gap-2.5 pl-2 border-l border-slate-200 hover:opacity-85 transition-opacity group cursor-pointer {{ request()->routeIs('admin.profile*') ? 'opacity-100' : '' }}">
+                        @if(auth()->user() && auth()->user()->avatar_url)
+                            <img src="{{ auth()->user()->avatar_url }}" alt="{{ auth()->user()->name }}" class="w-8 h-8 rounded-full object-cover border border-slate-200">
+                        @else
+                            <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-900 font-bold flex items-center justify-center text-xs border border-blue-200/60">
+                                {{ auth()->user()?->initials ?? 'AD' }}
+                            </div>
+                        @endif
                         <div class="hidden md:block text-left">
-                            <div class="text-[11px] font-bold text-slate-900 leading-tight">Admin Profile</div>
-                            <div class="text-[10px] text-slate-500 leading-tight">{{ auth()->user()->name ?? 'Fakhri Izzul Haq' }}</div>
+                            <div class="text-[11px] font-bold text-slate-900 leading-tight group-hover:text-blue-700 transition-colors">Admin Profile</div>
+                            <div class="text-[10px] text-slate-500 leading-tight truncate max-w-[120px]">{{ auth()->user()->name ?? 'Administrator' }}</div>
                         </div>
-                        <svg class="w-3.5 h-3.5 text-slate-400 hidden md:block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg class="w-3.5 h-3.5 text-slate-400 hidden md:block group-hover:text-slate-600 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                         </svg>
-                    </div>
+                    </a>
                 </div>
             </header>
 

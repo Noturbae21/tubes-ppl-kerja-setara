@@ -244,8 +244,62 @@
     <div x-show="activeTab === 'dokumen'" class="space-y-6">
         <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 space-y-6">
             <div>
-                <h3 class="text-sm font-bold text-slate-900">Verifikasi Legalitas Badan Usaha</h3>
-                <p class="text-xs text-slate-500 mt-1">Dokumen ini wajib diunggah agar perusahaan Anda mendapatkan lencana terverifikasi dari Admin KerjaSetara.</p>
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-sm font-bold text-slate-900">Verifikasi Legalitas Badan Usaha</h3>
+                        <p class="text-xs text-slate-500 mt-1">Dokumen ini wajib diunggah agar perusahaan Anda mendapatkan lencana terverifikasi dari Admin KerjaSetara.</p>
+                    </div>
+
+                    <div>
+                        @if($company->isVerified())
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                                <span>Terverifikasi oleh Admin</span>
+                            </span>
+                        @elseif($company->isRejected())
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200">
+                                <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+                                <span>Verifikasi Ditolak</span>
+                            </span>
+                        @elseif($company->needsRevision())
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200">
+                                <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                                <span>Perlu Revisi Dokumen</span>
+                            </span>
+                        @else
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-800 border border-blue-200">
+                                <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
+                                <span>Menunggu Pemeriksaan Admin</span>
+                            </span>
+                        @endif
+                    </div>
+                </div>
+
+                @if($company->isRejected() && $company->rejection_reason)
+                    <div class="mt-4 p-4 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-800 space-y-1">
+                        <div class="font-bold flex items-center gap-2">
+                            <svg class="w-4 h-4 text-rose-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                            </svg>
+                            <span>Alasan Penolakan dari Administrator:</span>
+                        </div>
+                        <p class="pl-6">{{ $company->rejection_reason }}</p>
+                        <p class="pl-6 text-[11px] text-rose-600 pt-1">Silakan perbarui dokumen legalitas di bawah ini untuk mengajukan verifikasi ulang.</p>
+                    </div>
+                @endif
+
+                @if($company->needsRevision() && $company->revision_reason)
+                    <div class="mt-4 p-4 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-900 space-y-1">
+                        <div class="font-bold flex items-center gap-2">
+                            <svg class="w-4 h-4 text-amber-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <span>Catatan Permintaan Revisi dari Administrator:</span>
+                        </div>
+                        <p class="pl-6">{{ $company->revision_reason }}</p>
+                        <p class="pl-6 text-[11px] text-amber-700 pt-1">Silakan unggah dokumen yang telah diperbaiki. Setelah diunggah, status akan otomatis diajukan kembali ke antrean verifikasi Admin.</p>
+                    </div>
+                @endif
             </div>
 
             <!-- Card 1: NIB -->
@@ -253,8 +307,8 @@
                 <div>
                     <div class="flex items-center gap-3">
                         <h4 class="text-xs font-bold text-slate-900">Surat Izin Usaha / NIB</h4>
-                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                            ✓ Terverifikasi oleh Admin
+                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold {{ $company->isVerified() ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-slate-100 text-slate-600 border border-slate-200' }}">
+                            {{ $company->isVerified() ? '✓ Terverifikasi oleh Admin' : ($company->needsRevision() ? '⚠️ Perlu Revisi' : 'Menunggu Verifikasi') }}
                         </span>
                     </div>
                     <div class="flex items-center gap-2 mt-3">
@@ -265,7 +319,7 @@
                         </div>
                         <div>
                             <span class="text-xs font-bold text-slate-800 block">{{ $company->nib_file ?? 'NIB_PT_Teknologi_Inovatif.pdf' }}</span>
-                            <span class="text-[10px] text-slate-400">PDF · Dokumen terunggah</span>
+                            <span class="text-[10px] text-slate-400">PDF · Dokumen legal</span>
                         </div>
                     </div>
                 </div>
@@ -285,8 +339,8 @@
                 <div>
                     <div class="flex items-center gap-3">
                         <h4 class="text-xs font-bold text-slate-900">NPWP Perusahaan</h4>
-                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                            ✓ Terverifikasi
+                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold {{ $company->isVerified() ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-slate-100 text-slate-600 border border-slate-200' }}">
+                            {{ $company->isVerified() ? '✓ Terverifikasi' : ($company->needsRevision() ? '⚠️ Perlu Revisi' : 'Menunggu Verifikasi') }}
                         </span>
                     </div>
                     <div class="flex items-center gap-2 mt-3">
@@ -297,7 +351,7 @@
                         </div>
                         <div>
                             <span class="text-xs font-bold text-slate-800 block">{{ $company->npwp_file ?? 'NPWP_PT_Teknologi_Inovatif.pdf' }}</span>
-                            <span class="text-[10px] text-slate-400">PDF · Nama berkas ilustratif</span>
+                            <span class="text-[10px] text-slate-400">PDF · Dokumen pajak</span>
                         </div>
                     </div>
                 </div>

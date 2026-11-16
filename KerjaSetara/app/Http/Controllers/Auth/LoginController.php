@@ -134,7 +134,7 @@ class LoginController extends Controller
                 ->with('success', 'Selamat datang di Portal Perusahaan / HRD, '.$user->name.'.');
         }
 
-        return redirect()->intended(route('kandidat.home'))
+        return redirect()->intended(route('dashboard'))
             ->with('success', 'Selamat datang kembali di KerjaSetara, '.$user->name.'!');
     }
 }

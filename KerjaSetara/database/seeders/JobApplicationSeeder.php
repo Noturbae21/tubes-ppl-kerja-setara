@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\ActivityLog;
 use App\Models\CompanyProfile;
 use App\Models\JobApplication;
 use App\Models\JobVacancy;
@@ -15,59 +16,101 @@ class JobApplicationSeeder extends Seeder
 {
     public function run(): void
     {
-        // 1. Data 4 Perusahaan Mitra sesuai Mockup
+        // 1. Data 6 Perusahaan Mitra sesuai Desain Figma (Verifikasi Legalitas Perusahaan)
         $companiesData = [
             [
                 'email' => 'hrd@teknologiinovatif.test',
                 'name' => 'Dina Pratama',
                 'company_name' => 'PT Teknologi Inovatif',
-                'location' => 'Jl. Kantor Inklusif No. 10, Jakarta Selatan',
-                'phone' => '021 0000 2026',
+                'location' => 'Jl. Contoh Digital No. 12, Jakarta Selatan',
+                'phone' => '021 555 2026',
                 'website' => 'https://teknologiinovatif.example',
-                'nib_file' => 'NIB_PT_Teknologi_Inovatif.pdf',
-                'npwp_file' => 'NPWP_PT_Teknologi_Inovatif.pdf',
-                'industry' => 'Teknologi Informasi & Perangkat Lunak',
+                'nib_file' => 'nib_teknologi_inovatif_contoh.pdf',
+                'npwp_file' => 'npwp_teknologi_inovatif_contoh.pdf',
+                'industry' => 'Teknologi',
                 'description' => 'Perusahaan pengembang solusi digital inklusif dan ramah disabilitas.',
                 'features' => ['kursi_roda', 'toilet_disabilitas', 'bisindo'],
+                'verification_status' => 'pending',
+                'created_at' => Carbon::create(2026, 10, 5, 9, 20, 0),
             ],
             [
                 'email' => 'hrd@nusadigital.test',
                 'name' => 'HR Nusa Digital',
-                'company_name' => 'Nusa Digital',
-                'location' => 'Bandung',
-                'phone' => null,
-                'website' => 'https://example.com',
-                'nib_file' => null,
-                'npwp_file' => null,
-                'industry' => 'Teknologi & Konsultan Web',
+                'company_name' => 'PT Nusa Digital',
+                'location' => 'Jl. Ilustrasi No. 8, Bandung',
+                'phone' => '022 456 7890',
+                'website' => 'https://nusadigital.example',
+                'nib_file' => 'nib_nusa_digital_contoh.pdf',
+                'npwp_file' => 'npwp_nusa_digital_contoh.pdf',
+                'industry' => 'Teknologi',
                 'description' => 'Agensi digital terkemuka di Bandung dengan lingkungan kerja kolaboratif dan adaptif.',
                 'features' => ['ramp', 'lift', 'wfh_fleksibel'],
+                'verification_status' => 'pending',
+                'created_at' => Carbon::create(2026, 10, 4, 14, 35, 0),
             ],
             [
                 'email' => 'hrd@solusibersama.test',
                 'name' => 'HR PT Solusi Bersama',
                 'company_name' => 'PT Solusi Bersama',
-                'location' => 'Jakarta',
-                'phone' => null,
-                'website' => 'https://example.com',
-                'nib_file' => null,
-                'npwp_file' => null,
-                'industry' => 'Layanan Pelanggan & Alih Daya',
+                'location' => 'Jl. Contoh Setara No. 5, Jakarta Pusat',
+                'phone' => '021 789 0123',
+                'website' => 'https://solusibersama.example',
+                'nib_file' => 'nib_solusi_bersama_contoh.pdf',
+                'npwp_file' => 'npwp_solusi_bersama_contoh.pdf',
+                'industry' => 'Jasa',
                 'description' => 'Penyedia layanan operasional ramah talenta inklusif nasional.',
                 'features' => ['ramp', 'lift', 'sign_language', 'toilet_khusus'],
+                'verification_status' => 'pending',
+                'created_at' => Carbon::create(2026, 10, 4, 11, 10, 0),
             ],
             [
                 'email' => 'hrd@arunikafinance.test',
                 'name' => 'HR Arunika Finance',
-                'company_name' => 'Arunika Finance',
-                'location' => 'Surabaya',
-                'phone' => null,
-                'website' => 'https://example.com',
-                'nib_file' => null,
-                'npwp_file' => null,
-                'industry' => 'Teknologi Finansial & Investasi',
+                'company_name' => 'PT Arunika Finance',
+                'location' => 'Jl. Contoh Usaha No. 21, Surabaya',
+                'phone' => '031 345 6789',
+                'website' => 'https://arunikafinance.example',
+                'nib_file' => 'nib_arunika_finance_contoh.pdf',
+                'npwp_file' => 'npwp_arunika_finance_contoh.pdf',
+                'industry' => 'Keuangan',
                 'description' => 'Lembaga keuangan modern yang membuka akses luas bagi talenta disabilitas analitis.',
                 'features' => ['screen_reader', 'keyboard_navigation', 'ruang_tenang'],
+                'verification_status' => 'verified',
+                'verified_at' => Carbon::create(2026, 10, 4, 10, 0, 0),
+                'created_at' => Carbon::create(2026, 10, 3, 16, 0, 0),
+            ],
+            [
+                'email' => 'hrd@ceritastudio.test',
+                'name' => 'HR Cerita Studio',
+                'company_name' => 'PT Cerita Studio',
+                'location' => 'Jl. Ilustrasi Kreatif No. 3, Yogyakarta',
+                'phone' => '0274 567 890',
+                'website' => 'https://ceritastudio.example',
+                'nib_file' => 'nib_cerita_studio_contoh.pdf',
+                'npwp_file' => 'npwp_cerita_studio_contoh.pdf',
+                'industry' => 'Kreatif',
+                'description' => 'Studio kreatif dan produksi konten digital ramah talenta neurodiverse.',
+                'features' => ['ruang_tenang', 'wfh_fleksibel'],
+                'verification_status' => 'verified',
+                'verified_at' => Carbon::create(2026, 10, 3, 11, 30, 0),
+                'created_at' => Carbon::create(2026, 10, 2, 10, 45, 0),
+            ],
+            [
+                'email' => 'hrd@ruangtumbuh.test',
+                'name' => 'HR Ruang Tumbuh',
+                'company_name' => 'PT Ruang Tumbuh',
+                'location' => 'Jl. Contoh Tumbuh No. 7, Jakarta Barat',
+                'phone' => '021 890 1234',
+                'website' => 'https://ruangtumbuh.example',
+                'nib_file' => 'nib_ruang_tumbuh_contoh.pdf',
+                'npwp_file' => 'npwp_ruang_tumbuh_contoh.pdf',
+                'industry' => 'Konsultasi',
+                'description' => 'Lembaga konsultasi pengembangan organisasi dan talenta inklusif.',
+                'features' => ['lift', 'sign_language'],
+                'verification_status' => 'rejected',
+                'rejection_reason' => 'Izin tidak sesuai',
+                'verified_at' => Carbon::create(2026, 10, 1, 12, 0, 0),
+                'created_at' => Carbon::create(2026, 10, 1, 8, 15, 0),
             ],
         ];
 
@@ -96,11 +139,16 @@ class JobApplicationSeeder extends Seeder
                     'description' => $c['description'],
                     'employee_count' => 250,
                     'accessibility_features' => $c['features'],
-                    'is_inclusive_certified' => true,
+                    'is_inclusive_certified' => ($c['verification_status'] ?? 'pending') === 'verified',
+                    'verification_status' => $c['verification_status'] ?? 'pending',
+                    'verified_at' => $c['verified_at'] ?? null,
+                    'rejection_reason' => $c['rejection_reason'] ?? null,
+                    'created_at' => $c['created_at'] ?? now(),
                 ]
             );
 
             $companies[$c['company_name']] = $profile;
+            $companies[preg_replace('/^PT\s+/i', '', $c['company_name'])] = $profile;
         }
 
         // 2. Data Lowongan Kerja Perusahaan Mitra & Mockup PT Teknologi Inovatif
@@ -390,6 +438,84 @@ class JobApplicationSeeder extends Seeder
                     'created_at' => $appData['created_at'],
                 ]
             );
+        }
+
+        // 4. Seed Log Aktivitas Sistem & Keamanan (Sesuai Referensi Desain Figma)
+        if (ActivityLog::count() === 0) {
+            $adminUser = User::where('role', 'admin')->first();
+            $candidateUser = User::where('role', 'kandidat')->first();
+
+            ActivityLog::create([
+                'user_id' => $candidateUser?->id,
+                'user_name' => 'Nadia Saraswati',
+                'user_role' => 'kandidat',
+                'action_type' => 'create',
+                'description' => 'Melamar posisi UI/UX Designer di PT Teknologi Inovatif.',
+                'level' => 'info',
+                'result' => 'Berhasil',
+                'ip_address' => '192.0.2.24',
+                'created_at' => Carbon::create(2026, 10, 26, 10, 42, 18),
+            ]);
+
+            ActivityLog::create([
+                'user_id' => null,
+                'user_name' => 'PT Nusa Digital',
+                'user_role' => 'perusahaan',
+                'action_type' => 'create',
+                'description' => 'Mendaftarkan lowongan baru: Frontend Developer, penempatan Bandung.',
+                'level' => 'info',
+                'result' => 'Berhasil',
+                'ip_address' => '198.51.100.18',
+                'created_at' => Carbon::create(2026, 10, 26, 10, 30, 5),
+            ]);
+
+            ActivityLog::create([
+                'user_id' => $adminUser?->id,
+                'user_name' => $adminUser?->name ?? 'Admin Fakhri',
+                'user_role' => 'admin',
+                'action_type' => 'update',
+                'description' => 'Memverifikasi legalitas PT Teknologi Inovatif; dokumen NIB disetujui.',
+                'level' => 'info',
+                'result' => 'Berhasil',
+                'ip_address' => '203.0.113.10',
+                'created_at' => Carbon::create(2026, 10, 26, 9, 55, 32),
+            ]);
+
+            ActivityLog::create([
+                'user_id' => null,
+                'user_name' => 'Budi Santoso',
+                'user_role' => 'kandidat',
+                'action_type' => 'login',
+                'description' => 'Masuk ke akun kandidat melalui email dan kata sandi.',
+                'level' => 'info',
+                'result' => 'Berhasil',
+                'ip_address' => '192.0.2.58',
+                'created_at' => Carbon::create(2026, 10, 26, 9, 12, 44),
+            ]);
+
+            ActivityLog::create([
+                'user_id' => null,
+                'user_name' => 'Aktor tidak dikenal',
+                'user_role' => 'tamu',
+                'action_type' => 'login_failed',
+                'description' => 'Percobaan masuk ditolak karena kata sandi tidak sesuai.',
+                'level' => 'warning',
+                'result' => 'Gagal',
+                'ip_address' => '198.51.100.72',
+                'created_at' => Carbon::create(2026, 10, 25, 21, 8, 12),
+            ]);
+
+            ActivityLog::create([
+                'user_id' => null,
+                'user_name' => 'Sistem',
+                'user_role' => 'sistem',
+                'action_type' => 'access_denied',
+                'description' => 'Token sesi tidak valid; akses ke endpoint admin dibatalkan.',
+                'level' => 'error',
+                'result' => 'Ditolak',
+                'ip_address' => '203.0.113.42',
+                'created_at' => Carbon::create(2026, 10, 25, 20, 46, 9),
+            ]);
         }
     }
 }

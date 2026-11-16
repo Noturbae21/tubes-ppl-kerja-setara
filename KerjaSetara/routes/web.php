@@ -1,8 +1,11 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminActivityLogController;
 use App\Http\Controllers\Admin\AdminAuthController;
+use App\Http\Controllers\Admin\AdminCompanyVerificationController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminFacilityController;
+use App\Http\Controllers\Admin\AdminProfileController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\HomeController;
@@ -100,6 +103,20 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/users/{user}/activate', [AdminUserController::class, 'activate'])->name('users.activate');
         Route::delete('/users/{user}', [AdminUserController::class, 'destroy'])->name('users.destroy');
 
+        // Company Legal Verification (Verifikasi Perusahaan)
+        Route::get('/verifikasi-perusahaan', [AdminCompanyVerificationController::class, 'index'])->name('companies.verification');
+        Route::get('/companies', [AdminCompanyVerificationController::class, 'index'])->name('companies.index');
+        Route::get('/companies/{company}', [AdminCompanyVerificationController::class, 'show'])->name('companies.show');
+        Route::get('/companies/{company}/documents/{type}', [AdminCompanyVerificationController::class, 'document'])->name('companies.document');
+        Route::post('/companies/{company}/verify', [AdminCompanyVerificationController::class, 'verify'])->name('companies.verify');
+        Route::post('/companies/{company}/reject', [AdminCompanyVerificationController::class, 'reject'])->name('companies.reject');
+        Route::post('/companies/{company}/revision', [AdminCompanyVerificationController::class, 'requestRevision'])->name('companies.revision');
+        Route::post('/companies/{company}/notes', [AdminCompanyVerificationController::class, 'updateNotes'])->name('companies.notes');
+
+        // Log Aktivitas Sistem & Keamanan
+        Route::get('/logs', [AdminActivityLogController::class, 'index'])->name('logs.index');
+        Route::get('/log-aktivitas', fn () => redirect()->route('admin.logs.index'))->name('logs.alias');
+
         // Job Vacancies Moderation
         Route::get('/lowongan', [AdminDashboardController::class, 'vacancies'])->name('lowongan');
         Route::post('/lowongan/{vacancy}/toggle-status', [AdminDashboardController::class, 'toggleVacancyStatus'])->name('lowongan.toggle');
@@ -114,6 +131,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::delete('/facilities/{facility}', [AdminFacilityController::class, 'destroy'])->name('facilities.destroy');
         Route::get('/facilities/{facility}/icon', [AdminFacilityController::class, 'icon'])->name('facilities.icon');
         Route::get('/fasilitas', fn () => redirect()->route('admin.facilities.index'))->name('fasilitas');
+
+        // Administrator Profile (Profil Administrator)
+        Route::get('/profile', [AdminProfileController::class, 'edit'])->name('profile');
+        Route::put('/profile', [AdminProfileController::class, 'update'])->name('profile.update');
+        Route::get('/profil', fn () => redirect()->route('admin.profile'))->name('profil');
 
         // Settings & Accessibility Taxonomies
         Route::get('/settings', [AdminDashboardController::class, 'settings'])->name('settings');

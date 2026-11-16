@@ -17,7 +17,9 @@ class AdminFacilityManagementTest extends TestCase
     use RefreshDatabase;
 
     protected User $admin;
+
     protected User $hrd;
+
     protected CompanyProfile $company;
 
     protected function setUp(): void
@@ -53,6 +55,7 @@ class AdminFacilityManagementTest extends TestCase
     protected function createSafeSvgFile(string $name = 'test-icon.svg', int $sizeKb = 2): UploadedFile
     {
         $svgContent = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>';
+
         return UploadedFile::fake()->createWithContent($name, $svgContent);
     }
 
@@ -64,12 +67,14 @@ class AdminFacilityManagementTest extends TestCase
 
     public function test_admin_can_access_facilities_index_page(): void
     {
-        Facility::create([
-            'name' => 'Akses Kursi Roda',
-            'description' => 'Ramp dan lift ramah kursi roda',
-            'icon_path' => 'facilities/icons/wheelchair.svg',
-            'is_active' => true,
-        ]);
+        Facility::firstOrCreate(
+            ['name' => 'Akses Kursi Roda'],
+            [
+                'description' => 'Ramp dan lift ramah kursi roda',
+                'icon_path' => 'facilities/icons/wheelchair.svg',
+                'is_active' => true,
+            ]
+        );
 
         $response = $this->actingAs($this->admin)->get(route('admin.facilities.index'));
 
@@ -93,14 +98,20 @@ class AdminFacilityManagementTest extends TestCase
             'is_active' => false,
         ]);
 
-        // Filter: active
-        $responseActive = $this->actingAs($this->admin)->get(route('admin.facilities.index', ['status' => 'active']));
+        // Filter: active with search to isolate from any existing pre-seeded records
+        $responseActive = $this->actingAs($this->admin)->get(route('admin.facilities.index', [
+            'status' => 'active',
+            'search' => 'Fasilitas Aktif Satu',
+        ]));
         $responseActive->assertOk();
         $responseActive->assertSee('Fasilitas Aktif Satu');
         $responseActive->assertDontSee('Fasilitas Nonaktif Dua');
 
-        // Filter: inactive
-        $responseInactive = $this->actingAs($this->admin)->get(route('admin.facilities.index', ['status' => 'inactive']));
+        // Filter: inactive with search
+        $responseInactive = $this->actingAs($this->admin)->get(route('admin.facilities.index', [
+            'status' => 'inactive',
+            'search' => 'Fasilitas Nonaktif Dua',
+        ]));
         $responseInactive->assertOk();
         $responseInactive->assertDontSee('Fasilitas Aktif Satu');
         $responseInactive->assertSee('Fasilitas Nonaktif Dua');
@@ -167,11 +178,13 @@ class AdminFacilityManagementTest extends TestCase
 
     public function test_duplicate_facility_name_is_rejected(): void
     {
-        Facility::create([
-            'name' => 'Akses Kursi Roda',
-            'description' => 'Ramp dan lift',
-            'is_active' => true,
-        ]);
+        Facility::firstOrCreate(
+            ['name' => 'Akses Kursi Roda'],
+            [
+                'description' => 'Ramp dan lift',
+                'is_active' => true,
+            ]
+        );
 
         $svgFile = $this->createSafeSvgFile('test.svg');
 
@@ -217,7 +230,7 @@ class AdminFacilityManagementTest extends TestCase
     public function test_svg_exceeding_100kb_is_rejected(): void
     {
         // 120 KB file
-        $bigContent = '<svg xmlns="http://www.w3.org/2000/svg">' . str_repeat('<!-- padding -->', 8000) . '<circle cx="12" cy="12" r="10"/></svg>';
+        $bigContent = '<svg xmlns="http://www.w3.org/2000/svg">'.str_repeat('<!-- padding -->', 8000).'<circle cx="12" cy="12" r="10"/></svg>';
         $file = UploadedFile::fake()->createWithContent('large.svg', $bigContent);
 
         $response = $this->actingAs($this->admin)->post(route('admin.facilities.store'), [

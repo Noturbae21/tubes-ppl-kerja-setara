@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Hrd;
 
 use App\Http\Controllers\Controller;
+use App\Models\ActivityLog;
 use App\Models\Facility;
 use App\Models\JobVacancy;
 use Carbon\Carbon;
@@ -155,6 +156,18 @@ class HrdVacancyController extends Controller
                 $vacancy->facilities()->sync($facilityIds);
             }
         }
+
+        ActivityLog::log(
+            'create',
+            "Mendaftarkan lowongan baru: {$vacancy->title}, penempatan {$vacancy->location}.",
+            [
+                'level' => 'info',
+                'result' => 'Berhasil',
+                'target_type' => 'job_vacancy',
+                'target_id' => $vacancy->id,
+                'user' => $user,
+            ]
+        );
 
         $message = $isActive
             ? "Lowongan '{$vacancy->title}' berhasil dipublikasikan dan kini dapat dilamar oleh kandidat!"
