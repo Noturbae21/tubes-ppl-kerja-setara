@@ -305,52 +305,7 @@
             </div>
         </div>
 
-        <!-- ══════════════════════════════════════════════════════════════════════
-            CARD 4: BATAS AKHIR & OPSI PUBLIKASI
-        ══════════════════════════════════════════════════════════════════════ -->
-        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 space-y-4">
-            <div class="flex items-start gap-3">
-                <div class="w-8 h-8 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                    </svg>
-                </div>
-                <div>
-                    <h3 class="text-sm font-bold text-slate-900">Batas Akhir & Opsi Publikasi</h3>
-                    <p class="text-[11px] text-slate-400">Tentukan periode penerimaan lamaran dan kapan lowongan ditayangkan.</p>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 pt-2 items-center">
-                <!-- Tenggat Waktu Lamaran -->
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1.5">Tenggat Waktu Lamaran</label>
-                    <div class="relative">
-                        <input type="date"
-                               name="deadline"
-                               value="2026-10-31"
-                               class="w-full pl-3.5 pr-10 py-2.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-600">
-                    </div>
-                </div>
-
-                <!-- Switch Publikasikan Sekarang -->
-                <div class="flex items-center justify-between sm:justify-start sm:gap-6 pt-3 sm:pt-6">
-                    <div>
-                        <span class="text-xs font-bold text-slate-900 block">Publikasikan Sekarang</span>
-                        <span class="text-[11px] text-slate-400">Langsung terlihat setelah dipublikasikan.</span>
-                    </div>
-
-                    <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox"
-                               name="is_active"
-                               value="1"
-                               x-model="publishNow"
-                               class="sr-only peer">
-                        <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#193a7c]"></div>
-                    </label>
-                </div>
-            </div>
-        </div>
+  
 
         <!-- ══════════════════════════════════════════════════════════════════════
             BOTTOM BAR
